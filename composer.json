@@ -1,0 +1,17 @@
+{
+	"name": "bluevisiontec/googleshoppingapi",
+	"description": "GoogleShopping API v2 module.",
+	"type": "magento-module",
+	"license":"OSL-3.0",
+	"authors": [
+		{
+			"name": "BlueVisionTec UG (haftungsbeschränkt)",
+			"email": "magedev@bluevisiontec.com",
+			"homepage": "http://www.bluevisiontec.com/"
+		}
+	],
+	"require": {
+		"magento-hackathon/magento-composer-installer": "*",
+		"google/apiclient": "*"
+	}
+}

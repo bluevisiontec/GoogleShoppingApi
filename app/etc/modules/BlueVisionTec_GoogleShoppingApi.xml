@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <BlueVisionTec_GoogleShoppingApi>
+            <active>true</active>
+            <codePool>community</codePool>  
+			<depends>
+				<Mage_Catalog/>
+			</depends>
+        </BlueVisionTec_GoogleShoppingApi>
+    </modules>
+</config>
