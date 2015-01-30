@@ -2,7 +2,7 @@
 <config>
   <modules>
     <BlueVisionTec_GoogleShoppingApi>
-      <version>0.0.2</version>
+      <version>0.0.3</version>
   </BlueVisionTec_GoogleShoppingApi>
   </modules>
   
@@ -85,7 +85,7 @@
       <layout>
           <updates>
               <googleshoppingapi>
-                  <file>googleshoppingapi.xml</file>
+                  <file>bluevisiontec/googleshoppingapi.xml</file>
               </googleshoppingapi>
           </updates>
       </layout>

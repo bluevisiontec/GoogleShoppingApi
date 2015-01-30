@@ -44,7 +44,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Source_GoogleShoppingCateg
                     $line++;
                     $this->_options[] = array(
                         'value' => $line,
-                        'label' => $category
+                        'label' => $line ." ". $category
                     );
                 }
             }

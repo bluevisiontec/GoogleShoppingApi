@@ -29,7 +29,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_GoogleProductCategory exte
 		// get category from product attribute
         $value = $product->getResource()->getAttribute('google_shopping_category')
         ->getFrontend()->getValue($product);
-
+		$value = preg_replace('/\d+ /','',$value);
         $shoppingProduct->setGoogleProductCategory($value);
         
         return $shoppingProduct;
