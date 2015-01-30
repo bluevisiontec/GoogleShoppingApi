@@ -189,7 +189,7 @@ $catalogEavSetup->addAttribute('catalog_product','google_shopping_category',
         'visible'           => true,
         'default'           => '',
         'class'             => '',
-        'source'            => '',
+        'source'            => 'googleshoppingapi/attribute_source_googleShoppingCategories',
         'required'          => false,
         'user_defined'      => true,
     )
