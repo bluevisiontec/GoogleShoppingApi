@@ -49,8 +49,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends BlueVisionTec_G
 
         $item->setGcontentItemId($shoppingProduct->getId())
             ->setPublished($published);
-
-        Mage::log($shoppingProduct);
             
         $expires = $shoppingProduct->getExpirationDate();
         
@@ -73,12 +71,13 @@ class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends BlueVisionTec_G
 		
 		$gItemId = $item->getGoogleShoppingItemId();
 
-// 		$product = $service->getProduct($gItemId,$item->getStoreId());
+		// get product from google shopping
+		//$product = $service->getProduct($gItemId,$item->getStoreId());
 		
 		$product = $item->getType()->convertAttributes($item->getProduct());
 		
 		$shoppingProduct = $service->updateProduct($product,$item->getStoreId());
-		Mage::log($shoppingProduct);
+
 		$expires = $shoppingProduct->getExpirationDate();
         
         if ($expires) {
@@ -97,7 +96,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends BlueVisionTec_G
      */
     public function delete($item)
     {
-        
         $gItemId = $item->getGoogleShoppingItemId();
         $service = Mage::getModel('googleshoppingapi/googleShopping');
         $service->deleteProduct($gItemId,$item->getStoreId());

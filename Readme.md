@@ -95,14 +95,24 @@ http://console.developers.google.com/
 * Basic Module configuration: Magento Admin -> System -> Configuration -> 
 BlueVisionTec Modules -> GoogleShoppingApi
 
-* Account-ID: Your GoogleShopping Merchant ID
-* Google Developer Project Client ID: The Client ID generated above
-* Google Developer Project Client Secret: The Client Secret generated above
-* Target Country: The country for which you want to upload your products
-* Update Google Shopping Item when Product is Updated
+  * Account-ID: Your GoogleShopping Merchant ID
+  * Google Developer Project Client ID: The Client ID generated above
+  * Google Developer Project Client Secret: The Client Secret generated above
+  * Target Country: The country for which you want to upload your products
+  * Update Google Shopping Item when Product is Updated
   * Not implemented (observer disabled in current version, will be readded)
-* Renew not listed items
+  * Renew not listed items
   * When syncing a product which is not listed on GoogleShopping, it will be added
-* Remove disabled items
+  * Remove disabled items
   * Removes items which are disabled or out of stock from GoogleShopping
+
+* Product configuration
+  * In Product edit view you will find a new tab "GoogleShopping". 
+    Here you can set the GoogleShopping Category. 
+    The language of the category is taken from the configured store language.
+    The taxonomy files for de_DE and en_US are shipped with the module package.
+    Further taxonomy files shout be added to /var/bluevisiontec/googleshoppingapi/data .
+    
+* Attributes configuration and item management can be found in Magento Admin ->
+  Catalog -> Google Content APIv2
 
