@@ -45,6 +45,16 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_OauthControlle
         }
         return $store;
     }
+    
+    /**
+     * Retrieve synchronization process mutex
+     *
+     * @return Mage_GoogleShopping_Model_Flag
+     */
+    protected function _getFlag()
+    {
+        return Mage::getSingleton('googleshoppingapi/flag')->loadSelf();
+    }
 	
 	public function authAction() {
 		$url = Mage::getUrl("adminhtml/googleShoppingApi_oauth/auth");
@@ -85,6 +95,9 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_OauthControlle
 			$accessToken = $client->authenticate($code);
 			$accessTokens[$storeId] = $accessToken;
 			$adminSession->setGoogleOAuth2Token($accessTokens);
+			// unlock flag after successfull authentication
+			$flag = $this->_getFlag();
+			$flag->unlock();
 			$this->_redirect('*/googleShoppingApi_items/index', array('store'=>$storeId));
 			return $this;
 		}
