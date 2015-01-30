@@ -2,3 +2,4 @@ app/code/community/BlueVisionTec/GoogleShoppingApi/* app/code/community/BlueVisi
 app/etc/modules/BlueVisionTec_GoogleShoppingApi.xml app/etc/modules/BlueVisionTec_GoogleShoppingApi.xml
 app/locale/de_DE/BlueVisionTec_GoogleShoppingApi.csv app/locale/de_DE/BlueVisionTec_GoogleShoppingApi.csv
 var/bluevisiontec/googleshoppingapi/data/* var/bluevisiontec/googleshoppingapi/data/
+app/design/adminhtml/default/default/template/googleshoppingapi/* app/design/adminhtml/default/default/template/googleshoppingapi/
