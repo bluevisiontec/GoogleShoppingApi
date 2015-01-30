@@ -64,4 +64,4 @@ php bin/composer.phar install
 
 As the module has to use Google OAuth2 a ClientId and ClientSecret for Google
 Content API is required. This can be generated in the 
-[Google Developer Console]http://console.developers.google.com/
+http://console.developers.google.com/
