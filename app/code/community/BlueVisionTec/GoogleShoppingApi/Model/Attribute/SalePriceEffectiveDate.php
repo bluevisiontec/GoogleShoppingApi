@@ -61,8 +61,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_SalePriceEffectiveDate ext
         }
 
         if (!is_null($dateString)) {
-            $this->_setAttribute($entry, 'sale_price_effective_date', self::ATTRIBUTE_TYPE_TEXT, $dateString);
-            
             $shoppingProduct->setSalePriceEffectiveDate($dateString);
         }
 

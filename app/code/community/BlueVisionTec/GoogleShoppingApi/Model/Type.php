@@ -41,27 +41,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Type extends Mage_Core_Model_Abstrac
         return $this->getResource()
             ->loadByAttributeSetIdAndTargetCountry($this, $attributeSetId, $targetCountry);
     }
-
-    /**
-     * Prepare Entry data and attributes before saving in Google Content
-     *
-     * @param Varien_Gdata_Gshopping_Entry $entry
-     * @return Varien_Gdata_Gshopping_Entry
-     */
-    public function convertProductToEntry($product, $entry)
-    {
-        $map = $this->_getAttributesMapByProduct($product);
-        $base = $this->_getBaseAttributes();
-        $attributes = array_merge($base, $map);
-
-        $this->_removeNonexistentAttributes($entry, array_keys($attributes));
-
-        foreach ($attributes as $name => $attribute) {
-            $attribute->convertAttribute($product, $entry);
-        }
-
-        return $entry;
-    }
     
     public function convertAttributes($product) {
     
@@ -71,8 +50,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Type extends Mage_Core_Model_Abstrac
         $attributes = array_merge($base, $map);
         
         foreach ($attributes as $name => $attribute) {
-			Mage::log("ATTRIBUTE: ".$name);
-			Mage::log("ATTRIBUTE_CLASS: ".get_class($attribute));
             $attribute->convertAttribute($product, $newShoppingProduct);
         }
         
@@ -214,36 +191,4 @@ class BlueVisionTec_GoogleShoppingApi_Model_Type extends Mage_Core_Model_Abstrac
         return $this->_attributesCollection;
     }
 
- 
-    
-    /**
-     * Remove attributes which were removed from mapping.
-     *
-     * @param Varien_Gdata_Gshopping_Entry $entry
-     * @param array $existAttributes
-     * @return Varien_Gdata_Gshopping_Entry
-     */
-    protected function _removeNonexistentAttributes($entry, $existAttributes)
-    {
-        // attributes which can't be removed
-        $ignoredAttributes = array(
-            "id",
-            "image_link",
-            "content_language",
-            "target_country",
-            "expiration_date",
-            "adult"
-        );
-
-        $contentAttributes = $entry->getContentAttributes();
-        foreach ($contentAttributes as $contentAttribute) {
-            $name = Mage::helper('googleshoppingapi')->normalizeName($contentAttribute->getName());
-            if (!in_array($name, $ignoredAttributes) &&
-                !in_array($existAttributes, $existAttributes)) {
-                    $entry->removeContentAttribute($name);
-            }
-        }
-
-        return $entry;
-    }
 }

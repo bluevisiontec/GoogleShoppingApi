@@ -103,35 +103,4 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Default extends BlueVision
         }
     }
 
-    /**
-     * Insert/update attribute in the entry
-     *
-     * @param Varien_Gdata_Gshopping_Entry $entry
-     * @param string $name
-     * @param string $type
-     * @param string $value
-     * @param string $unit
-     * @return Varien_Gdata_Gshopping_Entry
-     */
-    protected function _setAttribute($entry, $name, $type = self::ATTRIBUTE_TYPE_TEXT, $value = '', $unit = null)
-    {
-		return false;
-        if (is_object($value) || ((string)$value != $value)) {
-            Mage::throwException(
-                Mage::helper('googleshoppingapi')->__('The attribute "%s" has incorrect type for Google Shopping. The product with this attribute hasn\'t been updated in Google Content.', $name)
-            );
-        }
-        $attribute = $entry->getContentAttributeByName($name);
-        if ($attribute instanceof Varien_Gdata_Gshopping_Extension_Attribute) {
-            $attribute->text = (string) $value;
-            $attribute->type = $type;
-            if (!is_null($unit)) {
-                $attribute->unit = $unit;
-            }
-        } else {
-            $entry->addContentAttribute($name, $value, $type, $unit);
-        }
-
-        return $entry;
-    }
 }

@@ -111,7 +111,7 @@ BlueVisionTec Modules -> GoogleShoppingApi
     Here you can set the GoogleShopping Category. 
     The language of the category is taken from the configured store language.
     The taxonomy files for de_DE and en_US are shipped with the module package.
-    Further taxonomy files shout be added to /var/bluevisiontec/googleshoppingapi/data .
+    Further taxonomy files should be added to /var/bluevisiontec/googleshoppingapi/data .
     
 * Attributes configuration and item management can be found in Magento Admin ->
   Catalog -> Google Content APIv2

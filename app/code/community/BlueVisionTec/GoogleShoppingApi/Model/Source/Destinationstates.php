@@ -25,9 +25,9 @@ class BlueVisionTec_GoogleShoppingApi_Model_Source_Destinationstates
     public function toOptionArray()
     {
         return array(
-            array('value' => Varien_Gdata_Gshopping_Extension_Control::DEST_MODE_DEFAULT,  'label' => Mage::helper('googleshoppingapi')->__('Default')),
-            array('value' => Varien_Gdata_Gshopping_Extension_Control::DEST_MODE_REQUIRED, 'label' => Mage::helper('googleshoppingapi')->__('Required')),
-            array('value' => Varien_Gdata_Gshopping_Extension_Control::DEST_MODE_EXCLUDED, 'label' => Mage::helper('googleshoppingapi')->__('Excluded'))
+            array('value' => 0,  'label' => Mage::helper('googleshoppingapi')->__('Default')),
+            array('value' => 1, 'label' => Mage::helper('googleshoppingapi')->__('Required')),
+            array('value' => 2, 'label' => Mage::helper('googleshoppingapi')->__('Excluded'))
         );
     }
 }

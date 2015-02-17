@@ -21,7 +21,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends BlueVisionTec_G
      * Return Store level Service Instance
      *
      * @param int $storeId
-     * @return Varien_Gdata_Gshopping_Content
+     * @return BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping
      */
     public function getService($storeId = null)
     {
@@ -113,61 +113,5 @@ class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends BlueVisionTec_G
     public function convertContentDateToTimestamp($gContentDate)
     {
         return Mage::getSingleton('core/date')->date(null, $gContentDate);
-    }
-
-    /**
-     * Return Google Content Item Attribute Value
-     *
-     * @param Varien_Gdata_Gshopping_Entry $entry
-     * @param string $name Google Content attribute name
-     * @return string|null Attribute value
-     */
-    protected function _getAttributeValue($entry, $name)
-    {
-        $attribute = $entry->getContentAttributeByName($name);
-        return ($attribute instanceof Varien_Gdata_Gshopping_Extension_Attribute)
-            ? $attribute->text
-            : null;
-    }
-
-    /**
-     * Retrieve item query for Google Content
-     *
-     * @param BlueVisionTec_GoogleShoppingApi_Model_Item $item
-     * @return Varien_Gdata_Gshopping_ItemQuery
-     */
-    protected function _buildItemQuery($item)
-    {
-		//TODO: remove
-        $storeId = $item->getStoreId();
-        $service = $this->getService($storeId);
-
-        $countryInfo = $this->getConfig()->getTargetCountryInfo($storeId);
-        $itemId = Mage::helper('googleshoppingapi')->buildContentProductId($item->getProductId(), $item->getStoreId());
-
-        $query = $service->newItemQuery()
-            ->setId($itemId)
-            ->setTargetCountry($this->getConfig()->getTargetCountry($storeId))
-            ->setLanguage($countryInfo['language']);
-
-        return $query;
-    }
-
-    /**
-     * Return item stats array based on Zend Gdata Entry object
-     *
-     * @param Varien_Gdata_Gshopping_Entry $entry
-     * @return array
-     */
-    protected function _getEntryStats($entry)
-    {
-		//TODO: remove
-        $result = array();
-        $expirationDate = $entry->getContentAttributeByName('expiration_date');
-        if ($expirationDate instanceof Varien_Gdata_Gshopping_Extension_Attribute) {
-            $result['expires'] = $this->convertContentDateToTimestamp($expirationDate->text);
-        }
-
-        return $result;
     }
 }
