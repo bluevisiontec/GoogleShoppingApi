@@ -32,7 +32,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Source_GoogleShoppingCateg
         $taxonomyFile = $taxonomyPath . "taxonomy.".$lang.".txt";
         
         if(!file_exists($taxonomyFile)) {
-			$taxonomyFile = $taxonomyPath . "taxonomy.en-US.txt";
+			$taxonomyFile = $taxonomyPath . "taxonomy.en_US.txt";
         }
         
         if (is_null($this->_options)) {
