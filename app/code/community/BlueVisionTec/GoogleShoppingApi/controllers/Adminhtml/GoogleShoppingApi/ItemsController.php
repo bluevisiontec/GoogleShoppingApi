@@ -107,16 +107,19 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
      */
     public function massAddAction()
     {
+		$storeId = $this->_getStore()->getId();
+		
         $flag = $this->_getFlag();
         if ($flag->isLocked()) {
-            return;
+			$this->_getSession()->addError($this->__('Flag locked!'));
+			$this->_redirect('*/*/index', array('store'=>$storeId));
+			return;
         }
 
         session_write_close();
         ignore_user_abort(true);
         set_time_limit(0);
 
-        $storeId = $this->_getStore()->getId();
         $productIds = $this->getRequest()->getParam('product', null);
         $notifier = Mage::getModel('adminnotification/inbox');
 
@@ -147,9 +150,13 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
      */
     public function massDeleteAction()
     {
+		$storeId = $this->_getStore()->getId();
+		
         $flag = $this->_getFlag();
         if ($flag->isLocked()) {
-            return;
+            $this->_getSession()->addError($this->__('Flag locked!'));
+			$this->_redirect('*/*/index', array('store'=>$storeId));
+			return;
         }
 
         session_write_close();
@@ -157,7 +164,6 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
         set_time_limit(0);
 
         $itemIds = $this->getRequest()->getParam('item');
-		$storeId = $this->_getStore()->getId();
 		
         try {
             $flag->lock();
@@ -191,19 +197,19 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
      */
     public function refreshAction()
     {
+		$storeId = $this->_getStore()->getId();
 		
         $flag = $this->_getFlag();
-         $flag->unlock();
+
         if ($flag->isLocked()) {
+			$this->_getSession()->addError($this->__('Flag locked!'));
 			$this->_redirect('*/*/index', array('store'=>$storeId));
-            return $this;
+			return;
         }
 
         session_write_close();
         ignore_user_abort(true);
         set_time_limit(0);
-        
-        $storeId = $this->_getStore()->getId();
 
         $itemIds = $this->getRequest()->getParam('item');
 
