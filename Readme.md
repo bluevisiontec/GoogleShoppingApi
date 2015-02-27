@@ -28,7 +28,7 @@ version, but will be re-enabled soon.
 
 ## Installation
 
-As the Google ApiClient must be installed in addition, it is recommendet to 
+As the Google ApiClient must be installed in addition, it is recommended to 
 install using composer.
 
 Create or adapt the composer.json file in your Magento root directory with the 

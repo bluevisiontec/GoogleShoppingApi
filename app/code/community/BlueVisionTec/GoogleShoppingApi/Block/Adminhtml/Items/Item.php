@@ -35,6 +35,8 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Item extends Mage_Ad
         $store = $this->_getStore();
         $collection->addStoreFilter($store->getId());
         $this->setCollection($collection);
+        $this->setDefaultSort('expires');
+		$this->setDefaultDir('ASC'); 
         parent::_prepareCollection();
         return $this;
     }
