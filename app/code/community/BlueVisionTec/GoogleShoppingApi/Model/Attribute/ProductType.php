@@ -44,7 +44,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_ProductType extends BlueVi
             }
 
             $value = implode(' > ', $breadcrumbs);
-            Mage::log($value);
+//             Mage::log($value);
         }
 
         $shoppingProduct->setProductType($value);

@@ -36,6 +36,12 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Source_GoogleShoppingCateg
         }
         
         if (is_null($this->_options)) {
+        
+			$this->_options[0] = array(
+				'value' => 1,
+				'label' => "1 Other"
+			);
+        
             if(($fh = fopen($taxonomyFile,"r")) !== false) {
                 $line = 0;
                 $this->_options = array();
@@ -49,6 +55,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Source_GoogleShoppingCateg
                 }
             }
         }
+        
         return $this->_options;
     }
 }

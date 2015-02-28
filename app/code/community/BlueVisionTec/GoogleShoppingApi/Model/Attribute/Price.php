@@ -32,7 +32,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Price extends BlueVisionTe
         );
 
         $store = Mage::app()->getStore($product->getStoreId());
-        $targetCountry = Mage::getSingleton('googleshopping/config')->getTargetCountry($product->getStoreId());
+        $targetCountry = Mage::getSingleton('googleshoppingapi/config')->getTargetCountry($product->getStoreId());
         $isSalePriceAllowed = true;//($targetCountry == 'US');
 
         // get tax settings
@@ -51,7 +51,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Price extends BlueVisionTe
             $finalPrice = $salePriceMapValue;
         
         } else if ($isSalePriceAllowed) {
-            $finalPrice = Mage::helper('googleshopping/price')->getCatalogPrice($product, $store, $inclTax);
+            $finalPrice = Mage::helper('googleshoppingapi/price')->getCatalogPrice($product, $store, $inclTax);
         }
         
         
@@ -66,10 +66,10 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Price extends BlueVisionTe
         if (!is_null($priceMapValue) && floatval($priceMapValue) > .0001) {
             $price = $priceMapValue;
         } else if ($isSalePriceAllowed) {
-            $price = Mage::helper('googleshopping/price')->getCatalogRegularPrice($product, $store);
+            $price = Mage::helper('googleshoppingapi/price')->getCatalogRegularPrice($product, $store);
         } else {
             $inclTax = ($priceDisplayType != Mage_Tax_Model_Config::DISPLAY_TYPE_EXCLUDING_TAX);
-            $price = Mage::helper('googleshopping/price')->getCatalogPrice($product, $store, $inclTax);
+            $price = Mage::helper('googleshoppingapi/price')->getCatalogPrice($product, $store, $inclTax);
         }
         if ($product->getTypeId() != Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
             $price = $taxHelp->getPrice($product, $price, $inclTax, null, null, null, $product->getStoreId());

@@ -43,7 +43,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Content extends BlueVision
         $processor = Mage::helper('cms')->getBlockTemplateProcessor();
         $descrText = strip_tags($processor->filter($descrText));
         
-        $descrText = Mage::helper('googleshopping')->cleanAtomAttribute($descrText);
+        $descrText = Mage::helper('googleshoppingapi')->cleanAtomAttribute($descrText);
         $descrText = html_entity_decode($descrText,null,"UTF-8");
         //$descrText = mb_convert_encoding($descrText,"UTF-8");
        $shoppingProduct->setDescription($descrText);

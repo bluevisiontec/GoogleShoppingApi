@@ -157,7 +157,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Item extends Mage_Core_Model_Abstrac
      */
     public function getGoogleShoppingItemId() {
 		$tmpId = urldecode($this->getGcontentItemId());
-		Mage::log($tmpId);
 		return preg_replace('/.*\//','',$tmpId);
     }
 

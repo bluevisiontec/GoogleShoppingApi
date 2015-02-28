@@ -24,7 +24,7 @@ if (Mage::helper('googleshoppingapi')->isModuleEnabled('Mage_GoogleShopping')) {
     $typesInsert = $installer->getConnection()
         ->select()
         ->from(
-            $installer->getTable('googleshopping/types'),
+            $installer->getTable('googleshoppingapi/types'),
             array(
                 'type_id',
                 'attribute_set_id',
@@ -36,7 +36,7 @@ if (Mage::helper('googleshoppingapi')->isModuleEnabled('Mage_GoogleShopping')) {
     $itemsInsert = $installer->getConnection()
         ->select()
         ->from(
-            $installer->getTable('googleshopping/items'),
+            $installer->getTable('googleshoppingapi/items'),
             array(
                 'item_id',
                 'type_id',
@@ -59,7 +59,7 @@ if (Mage::helper('googleshoppingapi')->isModuleEnabled('Mage_GoogleShopping')) {
     $attributesInsert = $installer->getConnection()
         ->select()
         ->from(
-            $installer->getTable('googleshopping/attributes'),
+            $installer->getTable('googleshoppingapi/attributes'),
             array(
                 'id',
                 'attribute_id',
