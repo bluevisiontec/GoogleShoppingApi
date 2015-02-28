@@ -50,6 +50,8 @@ class BlueVisionTec_GoogleShoppingApi_Model_Type extends Mage_Core_Model_Abstrac
         $attributes = array_merge($base, $map);
         
         foreach ($attributes as $name => $attribute) {
+			Mage::log($name);
+			Mage::log(get_class($attribute));
             $attribute->convertAttribute($product, $newShoppingProduct);
         }
         
@@ -161,6 +163,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Type extends Mage_Core_Model_Abstrac
     protected function _createAttribute($name)
     {
         $modelName = 'googleshoppingapi/attribute_' . $this->_prepareModelName($name);
+        
         $useDefault = false;
         try {
             $attributeModel = Mage::getModel($modelName);

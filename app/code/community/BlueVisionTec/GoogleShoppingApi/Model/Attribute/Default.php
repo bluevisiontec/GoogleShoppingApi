@@ -36,7 +36,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Default extends BlueVision
      */
     public function convertAttribute($product, $shoppingProduct)
     {
-
         if (is_null($this->getName())) {
             return $shoppingProduct;
         }
@@ -44,7 +43,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Default extends BlueVision
             ->getProductAttribute($product, $this->getAttributeId());
         $type = $this->getGcontentAttributeType($productAttribute);
         $value = $this->getProductAttributeValue($product);
-// 		Mage::log($this->getName().": ".$value);
+
         if (!is_null($value)) {
             $shoppingProduct->offsetSet($this->getName(),$value);
         }
