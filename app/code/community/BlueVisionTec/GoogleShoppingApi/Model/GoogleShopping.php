@@ -1,5 +1,5 @@
 <?php
-
+require_once Mage::getBaseDir().'/vendor/google/apiclient/src/Google/Client.php';
 /**
  * @category	BlueVisionTec
  * @package     BlueVisionTec_GoogleShoppingApi
@@ -60,10 +60,11 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
 		$adminSession = Mage::getSingleton('admin/session');
 
  		$accessTokens = $adminSession->getGoogleOAuth2Token();
- 		$accessToken = $accessTokens[$storeId];
 
  		$clientId = $this->getConfig()->getConfigData('client_id',$storeId);
 		$clientSecret = $this->getConfig()->getConfigData('client_secret',$storeId);
+		
+		$accessToken = $accessTokens[$clientId];
 		
 		if(!$clientId || !$clientSecret) {
 			Mage::getSingleton('adminhtml/session')->addError("Please specify Google Content API access data for this store!");

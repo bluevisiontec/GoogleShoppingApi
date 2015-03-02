@@ -93,7 +93,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_OauthControlle
 		$code = $this->getRequest()->getParam('code');
 		if($code) {
 			$accessToken = $client->authenticate($code);
-			$accessTokens[$storeId] = $accessToken;
+			$accessTokens[$clientId] = $accessToken;
 			$adminSession->setGoogleOAuth2Token($accessTokens);
 			// unlock flag after successfull authentication
 			$flag = $this->_getFlag();
