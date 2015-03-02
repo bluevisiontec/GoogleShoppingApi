@@ -22,7 +22,8 @@ version, but will be re-enabled soon.
 * strip tags from description
 * make sales price available in countries outside the US
 * possibility to define a separate google shopping image with base image fallback
-* adds Google Analytics source to product link (utm_source=GoogleShopping)
+* option to add Google Analytics source to product link (utm_source=GoogleShopping)
+* option to add custom parameters to product link
 * adds Austria as target country
 * ability to set Google product category in Magento product details
 

@@ -38,7 +38,16 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
                 }
             }
             
-            $shoppingProduct->setLink($url.'&utm_source=GoogleShopping');
+            $config = Mage::getSingleton('googleshoppingapi/config');
+			if( $config->getAddUtmSrcGshopping($product->getStoreId()) ) {
+				$url .= '&utm_source=GoogleShopping';
+			}
+			if( $customUrlParameters = 
+					$config->getCustomUrlParameters($product->getStoreId()) ) {
+				$url .= $customUrlParameters;
+			}
+            
+            $shoppingProduct->setLink($url);
         }
 
         return $shoppingProduct;

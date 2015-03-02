@@ -1,5 +1,5 @@
 <?php
-require_once Mage::getBaseDir().'/vendor/google/apiclient/src/Google/Client.php';
+
 /**
  * @category	BlueVisionTec
  * @package     BlueVisionTec_GoogleShoppingApi
