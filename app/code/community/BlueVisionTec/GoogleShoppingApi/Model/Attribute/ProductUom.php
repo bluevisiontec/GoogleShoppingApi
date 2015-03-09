@@ -13,7 +13,8 @@
  * @package    BlueVisionTec_GoogleShoppingApi
  * @author      BlueVisionTec UG (haftungsbeschränkt) <magedev@bluevisiontec.eu>
  */
-class BlueVisionTec_GoogleShoppingApi_Model_Attribute_ProductUom extends Mage_GoogleShopping_Model_Attribute_Default
+class BlueVisionTec_GoogleShoppingApi_Model_Attribute_ProductUom 
+	extends BlueVisionTec_GoogleShoppingApi_Model_Attribute_Default
 {
     /**
      * Set current attribute to entry (for specified product)

@@ -26,7 +26,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Id extends BlueVisionTec_G
      */
     public function convertAttribute($product, $shoppingProduct)
     {
-        echo $value = Mage::helper('googleshoppingapi')->buildContentProductId($product->getId(), $product->getStoreId());
+        $value = Mage::helper('googleshoppingapi')->buildContentProductId($product->getId(), $product->getStoreId());
         return $shoppingProduct->setOfferId($value);
     }
 }
