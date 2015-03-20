@@ -4,7 +4,7 @@
 
 This module is based on the official Magento GoogleShopping module and enhances
 the original module features with APIv2 support (APIv1 support removed),
-OAuth2 support and serveral additional features from the original 
+OAuth2 support and several additional features from the original 
 EnhancedGoogleShopping module.
 
 If the original Magento GoogleShopping module is installed, data will be migrated.
@@ -38,6 +38,8 @@ redirected to OAuth2 authentication.
 
 ## Installation
 
+### Install using composer
+
 As the Google ApiClient must be installed in addition, it is recommended to 
 install using composer.
 
@@ -68,12 +70,24 @@ following content:
 }
 ```
 
-### Install composer
+#### Install composer
 ```bash
 mkdir bin
 curl -s https://getcomposer.org/installer | php -- --install-dir=bin
 php bin/composer.phar install
 ```
+
+### Install manually
+
+* Copy app, js, var to your magento root directory
+* Download Google Content API Release 1.1.2: https://github.com/google/google-api-php-client/archive/1.1.2.tar.gz
+	* Thanks to @damek132 for notice
+* Install Google Content API to [MAGENTO_ROOT]/vendor/google/apiclient/
+* You should have at least the autoload.php file and the src folder in [MAGENTO_ROOT]/vendor/google/apiclient/
+
+### After installation
+
+* Clean the Magento Cache and log out of the backend
 
 ## Configuration
 
@@ -122,7 +136,26 @@ BlueVisionTec Modules -> GoogleShoppingApi
     The language of the category is taken from the configured store language.
     The taxonomy files for de_DE and en_US are shipped with the module package.
     Further taxonomy files should be added to /var/bluevisiontec/googleshoppingapi/data .
+  * Links to taxonomy files:
+    * http://www.google.com/basepages/producttype/taxonomy.en-US.txt
+    * http://www.google.com/basepages/producttype/taxonomy.de-DE.txt
     
 * Attributes configuration and item management can be found in Magento Admin ->
   Catalog -> Google Content APIv2
 
+* Before uploading an item you will have to set the attribute mapping
+	* Magento Admin -> Catalog -> Google Content API V2 -> Manage attributes
+	* See https://support.google.com/merchants/answer/1344057 for requirements
+	* Example for default attribute set
+		* SKU => Manufacturer's Part Number (MPN)
+		* Condition => Condition
+			* You might have to add the attribute condition as DropDown with the Options new, refurbished, used
+		* Name => Title
+		* Description => Description
+		* Price => Price 
+			* Sales price is taken if set
+		* EAN13 => GTIN
+			* You need 2 out of 3 (MPN, GTIN, Brand), so you might add a similar attribute
+		* Manufacturer => Brand
+		
+![GoogleShoppingAPI attribute mapping](docs/images/attribute-mapping.png)
