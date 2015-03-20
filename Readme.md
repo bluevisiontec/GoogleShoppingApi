@@ -9,8 +9,17 @@ EnhancedGoogleShopping module.
 
 If the original Magento GoogleShopping module is installed, data will be migrated.
 
-The observer (auto sync after saving product changes) is disabled in the current
-version, but will be re-enabled soon.
+~~The observer (auto sync after saving product changes) is disabled in the current
+version, but will be re-enabled soon.~~
+
+The observer was re-enabled with version 0.1.0 . To prevent problems when users
+are editing products which have no access to GoogleShopping through OAuth2, products
+are only updated on GoogleShopping if a valid access token for the store exists.
+
+To authenticate and get an access token go to Magento Admin -> Catalog -> Google 
+Content APIv2 and select the store view in which you want to authenticate. 
+After selecting a store view without valid access token you will be automatically
+redirected to OAuth2 authentication.
 
 ## Features
 
@@ -101,7 +110,7 @@ BlueVisionTec Modules -> GoogleShoppingApi
   * Google Developer Project Client Secret: The Client Secret generated above
   * Target Country: The country for which you want to upload your products
   * Update Google Shopping Item when Product is Updated
-  * Not implemented (observer disabled in current version, will be readded)
+	* ~~Not implemented (observer disabled in current version, will be readded)~~
   * Renew not listed items
   * When syncing a product which is not listed on GoogleShopping, it will be added
   * Remove disabled items

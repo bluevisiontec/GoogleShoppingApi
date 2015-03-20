@@ -143,6 +143,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 if ($this->_flag && $this->_flag->isExpired()) {
                     break;
                 }
+                
                 $removeInactive = $this->_getConfig()->getConfigData('autoremove_disabled',$item->getStoreId());
 				$renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
                 try {

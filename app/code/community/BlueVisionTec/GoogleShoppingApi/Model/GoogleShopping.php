@@ -39,20 +39,48 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
     }
     
     /**
-     * Retutn Google Content Client Instance
+     * Redirect to OAuth2 authentication
+     *
+     * @param int $storeId
+     */
+    public function redirectToAuth($storeId,$noAuthRedirect) {
+    
+		if($noAuthRedirect) {
+			return false;
+		} else {
+			header('Location: ' . Mage::getUrl("adminhtml/googleShoppingApi_oauth/auth",array('store_id'=>$storeId) ));
+			exit;
+		}
+    }
+	/**
+	 * Check if client is authenticated for storeId
+	 *
+	 * @param int $storeId
+	 *
+	 * @return bool
+	 */
+    public function isAuthenticated($storeId) {
+		if($this->getClient($storeId, true) === false) {
+			return false;
+		} else {
+			return true;
+		}
+    }
+    
+    /**
+     * Return Google Content Client Instance
      *
      * @param int $storeId
      * @param string $loginToken
      * @param string $loginCaptcha
+     *
      * @return Zend_Http_Client
      */
-    public function getClient($storeId)
+    public function getClient($storeId, $noAuthRedirect = false)
     {
-    
 		if(isset($this->_client)) {
 			if($this->_client->isAccessTokenExpired()) {
-				header('Location: ' . Mage::getUrl("adminhtml/googleShoppingApi_oauth/auth",array('store_id'=>$storeId) ));
-				exit;
+				return $this->redirectToAuth($storeId,$noAuthRedirect);
 			}
 			return $this->_client;
 		}
@@ -73,12 +101,8 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
  		}
  		
 		if(!isset($accessToken) || empty($accessToken) ) {
-			header('Location: ' . Mage::getUrl("adminhtml/googleShoppingApi_oauth/auth",array('store_id'=>$storeId) ));
-			exit;
+			return $this->redirectToAuth($storeId,$noAuthRedirect);
 		}
-
-		
-		
     
 		$client = new Google_Client();
 		$client->setApplicationName(self::APPNAME);
@@ -88,14 +112,12 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
 		$client->setAccessToken($accessToken);
 
 		if($client->isAccessTokenExpired()) {
-			header('Location: ' . Mage::getUrl("adminhtml/googleShoppingApi_oauth/auth",array('store_id'=>$storeId) ));
-			exit;
+			return $this->redirectToAuth($storeId,$noAuthRedirect);
 		}
 		
 		$this->_client = $client;
 		
 		return $this->_client;
-		
     }
     
     /**

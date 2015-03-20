@@ -2,7 +2,7 @@
 <config>
   <modules>
     <BlueVisionTec_GoogleShoppingApi>
-      <version>0.0.6</version>
+      <version>0.1.0</version>
   </BlueVisionTec_GoogleShoppingApi>
   </modules>
   
@@ -82,6 +82,32 @@
           </googleshoppingapi>
         </modules>
       </translate>
+	  <events>
+            <catalog_product_save_after>
+                <observers>
+                    <googleshoppingapi_observer>
+                        <class>googleshoppingapi/observer</class>
+                        <method>saveProductItem</method>
+                    </googleshoppingapi_observer>
+                </observers>
+            </catalog_product_save_after>
+            <catalog_product_delete_before>
+                <observers>
+                    <googleshoppingapi_observer>
+                        <class>googleshoppingapi/observer</class>
+                        <method>deleteProductItem</method>
+                    </googleshoppingapi_observer>
+                </observers>
+            </catalog_product_delete_before>
+            <controller_action_predispatch_adminhtml>
+                <observers>
+                    <googleshoppingapi_observer>
+                        <class>googleshoppingapi/observer</class>
+                        <method>checkSynchronizationOperations</method>
+                    </googleshoppingapi_observer>
+                </observers>
+            </controller_action_predispatch_adminhtml>
+        </events>
       <layout>
           <updates>
               <googleshoppingapi>
