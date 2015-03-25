@@ -20,7 +20,7 @@
 
 $installer = $this;
 
-if (Mage::helper('googleshopping')->isModuleEnabled('Mage_GoogleShopping')) {
+if (Mage::helper('googleshoppingapi')->isModuleEnabled('Mage_GoogleShopping')) {
     $typesInsert = $installer->getConnection()
         ->select()
         ->from(
