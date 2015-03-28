@@ -21,7 +21,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
     /**
      * Initialize general settings for action
      *
-     * @return  Mage_GoogleShopping_Adminhtml_Googleshopping_ItemsController
+     * @return  lueVisionTec_GoogleShoppingApi_Adminhtml_Googleshopping_ItemsController
      */
     protected function _initAction()
     {
@@ -95,7 +95,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
     /**
      * Retrieve synchronization process mutex
      *
-     * @return Mage_GoogleShopping_Model_Flag
+     * @return lueVisionTec_GoogleShoppingApi_Model_Flag
      */
     protected function _getFlag()
     {
@@ -121,7 +121,6 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
         set_time_limit(0);
 
         $productIds = $this->getRequest()->getParam('product', null);
-        $notifier = Mage::getModel('adminnotification/inbox');
 
         try {
             $flag->lock();
@@ -130,7 +129,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
                 ->addProducts($productIds, $storeId);
         } catch (Exception $e) {
             $flag->unlock();
-            $notifier->addMajor(
+            Mage::getModel('adminnotification/inbox')->addMajor(
                 Mage::helper('googleshoppingapi')->__('An error has occured while adding products to google shopping account.'),
                 $e->getMessage()
             );
@@ -331,7 +330,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
     /**
      * Get Google Shopping config model
      *
-     * @return Mage_GoogleShopping_Model_Config
+     * @return lueVisionTec_GoogleShoppingApi_Model_Config
      */
     protected function _getConfig()
     {

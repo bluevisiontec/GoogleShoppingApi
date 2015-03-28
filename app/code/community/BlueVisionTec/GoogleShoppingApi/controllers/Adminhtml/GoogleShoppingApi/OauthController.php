@@ -49,7 +49,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_OauthControlle
     /**
      * Retrieve synchronization process mutex
      *
-     * @return Mage_GoogleShopping_Model_Flag
+     * @return BlueVisionTec_GoogleShoppingApi_Model_Flag
      */
     protected function _getFlag()
     {

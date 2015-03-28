@@ -1,7 +1,7 @@
 <?php
 /**
  * @category	BlueVisionTec
- * @package     Mage_GoogleShopping
+ * @package     BlueVisionTec_GoogleShoppingApi
  * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
  * @copyright   Copyright (c) 2015 BlueVisionTec UG (haftungsbeschränkt) (http://www.bluevisiontec.de)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
@@ -32,7 +32,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_TypesControlle
     /**
      * Initialize attribute set mapping object
      *
-     * @return Mage_GoogleShopping_Adminhtml_Googleshopping_TypesController
+     * @return BlueVisionTec_GoogleShoppingApi_Adminhtml_Googleshopping_TypesController
      */
     protected function _initItemType()
     {
@@ -51,7 +51,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_TypesControlle
     /**
      * Initialize general settings for action
      *
-     * @return  Mage_GoogleShopping_Adminhtml_Googleshopping_ItemsController
+     * @return  BlueVisionTec_GoogleShoppingApi_Adminhtml_Googleshopping_ItemsController
      */
     protected function _initAction()
     {
@@ -147,7 +147,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_TypesControlle
      */
     public function saveAction()
     {
-        /** @var $typeModel Mage_GoogleShopping_Model_Type */
+        /** @var $typeModel BlueVisionTec_GoogleShoppingApi_Model_Type */
         $typeModel = Mage::getModel('googleshoppingapi/type');
         $id = $this->getRequest()->getParam('type_id');
         if (!is_null($id)) {

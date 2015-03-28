@@ -292,7 +292,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     /**
      * Get Google Shopping config model
      *
-     * @return Mage_GoogleShopping_Model_Config
+     * @return BlueVisionTec_GoogleShoppingApi_Model_Config
      */
     protected function _getConfig()
     {

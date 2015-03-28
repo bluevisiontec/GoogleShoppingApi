@@ -449,6 +449,10 @@
                     <name>Pattern/Graphic</name>
                     <required>1</required>
                 </pattern>
+				<identifier_exists translate="name">
+                    <name>Identifier Exists</name>
+                    <required>0</required>
+                </identifier_exists>
                 <energy_efficiency_class translate="name">
                     <name>Energy Efficiency Class</name>
                     <required>0</required>
