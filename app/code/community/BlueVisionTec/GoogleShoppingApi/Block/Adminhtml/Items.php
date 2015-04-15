@@ -49,19 +49,6 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items extends Mage_Adminht
     }
 
     /**
-     * Get HTML code for CAPTCHA
-     *
-     * @return string
-     */
-    public function getCaptchaHtml()
-    {
-        return $this->getLayout()->createBlock('googleshoppingapi/adminhtml_captcha')
-            ->setGcontentCaptchaToken($this->getGcontentCaptchaToken())
-            ->setGcontentCaptchaUrl($this->getGcontentCaptchaUrl())
-            ->toHtml();
-    }
-
-    /**
      * Get selecetd store
      *
      * @return Mage_Core_Model_Store

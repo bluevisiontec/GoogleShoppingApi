@@ -55,13 +55,15 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      *
      * @param array $productIds
      * @param int $storeId
-     * @throws Zend_Gdata_App_CaptchaRequiredException
+     * 
      * @throws Mage_Core_Exception
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
     public function addProducts($productIds, $storeId)
     {
-   
+        Mage::log("storeid".$storeId);
+        $this->_getLogger()->setStoreId($storeId);
+        
         $totalAdded = 0;
         $errors = array();
         if (is_array($productIds)) {
@@ -95,21 +97,21 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         }
 
         if ($totalAdded > 0) {
-            $this->_getNotifier()->addNotice(
+            $this->_getLogger()->addSuccess(
                 Mage::helper('googleshoppingapi')->__('Products were added to Google Shopping account.'),
                 Mage::helper('googleshoppingapi')->__('Total of %d product(s) have been added to Google Content.', $totalAdded)
             );
         }
 
         if (count($errors)) {
-            $this->_getNotifier()->addMajor(
+            $this->_getLogger()->addMajor(
                 Mage::helper('googleshoppingapi')->__('Errors happened while adding products to Google Shopping.'),
                 $errors
             );
         }
 
         if ($this->_flag->isExpired()) {
-            $this->_getNotifier()->addMajor(
+            $this->_getLogger()->addMajor(
                 Mage::helper('googleshoppingapi')->__('Operation of adding products to Google Shopping expired.'),
                 Mage::helper('googleshoppingapi')->__('Some products may have not been added to Google Shopping bacause of expiration')
             );
@@ -122,7 +124,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      * Update Google Content items.
      *
      * @param array|BlueVisionTec_GoogleShoppingApi_Model_Resource_Item_Collection $items
-     * @throws Zend_Gdata_App_CaptchaRequiredException
+     *
      * @throws Mage_Core_Exception
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
@@ -143,7 +145,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 if ($this->_flag && $this->_flag->isExpired()) {
                     break;
                 }
-                
+                $this->_getLogger()->setStoreId($item->getStoreId());
                 $removeInactive = $this->_getConfig()->getConfigData('autoremove_disabled',$item->getStoreId());
 				$renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
                 try {
@@ -171,14 +173,15 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         } else {
             return $this;
         }
-
-        $this->_getNotifier()->addSuccess(
-            Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed'),
-            Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
-        );
+        if($totalDeleted > 0 || $totalUpdated > 0) {
+            $this->_getLogger()->addSuccess(
+                Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed') . "\n"
+                . Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
+            );
+        }
         if ($totalFailed > 0 || count($errors)) {
             array_unshift($errors, Mage::helper('googleshoppingapi')->__("Cannot update %s items.", $totalFailed));
-            $this->_getNotifier()->addMajor(
+            $this->_getLogger()->addMajor(
                 Mage::helper('googleshoppingapi')->__('Errors happened during synchronization with Google Shopping'),
                 $errors
             );
@@ -206,6 +209,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 if ($this->_flag && $this->_flag->isExpired()) {
                     break;
                 }
+                $this->_getLogger()->setStoreId($item->getStoreId());
                 try {
                     $item->deleteItem()->delete();
                     // The item was removed successfully
@@ -214,7 +218,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                     
                     if($e->getCode() == 404){
 						$item->delete();
-						$this->_getNotifier()->addNotice(
+						$this->_getLogger()->addNotice(
 							Mage::helper('googleshoppingapi')->__(
 								'The item "%s" was not found on GoogleContent',
 								$item->getProduct()->getName()
@@ -232,13 +236,13 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         }
 
         if ($totalDeleted > 0) {
-            $this->_getNotifier()->addNotice(
+            $this->_getLogger()->addSuccess(
                 Mage::helper('googleshoppingapi')->__('Google Shopping item removal process succeded'),
                 Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been removed from Google Shopping.', $totalDeleted)
             );
         }
         if (count($errors)) {
-            $this->_getNotifier()->addMajor(
+            $this->_getLogger()->addMajor(
                 Mage::helper('googleshoppingapi')->__('Errors happened while deleting items from Google Shopping'),
                 $errors
             );
@@ -276,15 +280,15 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     {
         return Mage::getSingleton('adminhtml/session');
     }
-
+    
     /**
-     * Retrieve admin notifier
+     * Retrieve logger
      *
-     * @return Mage_Adminhtml_Model_Inbox
+     * @return BlueVisionTec_GoogleShoppingApi_Model_Log
      */
-    protected function _getNotifier()
+    protected function _getLogger()
     {
-        return Mage::getModel('adminnotification/inbox');
+        return Mage::getSingleton('googleshoppingapi/log');
     }
 
     /**
@@ -293,7 +297,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     protected function _addGeneralError()
     {
         if (!$this->_hasError) {
-            $this->_getNotifier()->addMajor(
+            $this->_getLogger()->addMajor(
                 Mage::helper('googleshoppingapi')->__('Google Shopping Error'),
                 Mage::helper('googleshoppingapi/category')->getMessage()
             );

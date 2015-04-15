@@ -15,22 +15,9 @@
  * @author      Magento Core Team <core@magentocommerce.com>
  * @author      BlueVisionTec UG (haftungsbeschränkt) <magedev@bluevisiontec.eu>
  */
-class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends BlueVisionTec_GoogleShoppingApi_Model_Service
+class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends Varien_Object
 {
-    /**
-     * Return Store level Service Instance
-     *
-     * @param int $storeId
-     * @return BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping
-     */
-    public function getService($storeId = null)
-    {
-        if ($storeId === null) {
-            $storeId = $this->getStoreId();
-        }
-        return parent::getService($storeId);
-    }
-
+   
     /**
      * Insert Item into Google Content
      *
