@@ -46,7 +46,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
 					$config->getCustomUrlParameters($product->getStoreId()) ) {
 				$url .= $customUrlParameters;
 			}
-            
+
             $shoppingProduct->setLink($url);
         }
 

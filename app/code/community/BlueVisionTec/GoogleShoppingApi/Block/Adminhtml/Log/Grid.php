@@ -73,7 +73,8 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Log_Grid extends Mage_Admi
                 'header'    => $this->__('Message'),
                 'index'     => 'message',
                 'type'      => 'text',
-                'nl2br'     => true
+                'nl2br'     => true,
+                'truncate'  => 10000,
         ));
 
         return parent::_prepareColumns();

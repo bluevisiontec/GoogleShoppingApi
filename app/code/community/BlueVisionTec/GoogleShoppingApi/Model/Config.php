@@ -125,7 +125,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Config extends Varien_Object
      */
     public function getCustomUrlParameters($storeId = null)
     {
-        return $this->getConfigData('customer_url_parameters', $storeId);
+        return $this->getConfigData('custom_url_parameters', $storeId);
     }
 
     /**
