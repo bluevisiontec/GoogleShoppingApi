@@ -80,8 +80,10 @@ php bin/composer.phar install
 ### Install manually
 
 * Copy app, js, var to your magento root directory
-* Download Google Content API Release 1.1.2: https://github.com/google/google-api-php-client/archive/1.1.2.tar.gz
+* Download Google Content API Client for PHP Release 1.1.2: https://github.com/google/google-api-php-client/archive/1.1.2.tar.gz
 	* Thanks to @damek132 for notice
+	* Please not that version 1.1.4 has an error which will be fixed in 1.1.5
+	* see https://github.com/google/google-api-php-client/commit/818b20c291b074a609da633d243bf61bcf7dfaac
 * Install Google Content API to [MAGENTO_ROOT]/vendor/google/apiclient/
 * You should have at least the autoload.php file and the src folder in [MAGENTO_ROOT]/vendor/google/apiclient/
 

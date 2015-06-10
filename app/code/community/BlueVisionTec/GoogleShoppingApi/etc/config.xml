@@ -2,7 +2,7 @@
 <config>
   <modules>
     <BlueVisionTec_GoogleShoppingApi>
-      <version>0.2.0</version>
+      <version>0.2.1</version>
   </BlueVisionTec_GoogleShoppingApi>
   </modules>
   
@@ -479,6 +479,28 @@
                     <required>0</required>
                 </adwords_queryparam>
             </ProductAds>
+            <CustomLabels>
+                <custom_label0 translate="name">
+                    <name>Custom label 0</name>
+                    <required>0</required>
+                </custom_label0>
+                <custom_label1 translate="name">
+                    <name>Custom label 1</name>
+                    <required>0</required>
+                </custom_label1>
+                <custom_label2 translate="name">
+                    <name>Custom label 2</name>
+                    <required>0</required>
+                </custom_label2>
+                <custom_label3 translate="name">
+                    <name>Custom label 3</name>
+                    <required>0</required>
+                </custom_label3>
+                <custom_label4 translate="name">
+                    <name>Custom label 4</name>
+                    <required>0</required>
+                </custom_label4>
+            </CustomLabels>
         </attributes>
         
         <!-- Groups are dependencies between attributes -->
