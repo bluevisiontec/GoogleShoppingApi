@@ -35,6 +35,7 @@ redirected to OAuth2 authentication.
 * option to add custom parameters to product link
 * adds Austria as target country
 * ability to set Google product category in Magento product details
+* ability to use OAuth2 service account
 
 ## Installation
 
@@ -93,11 +94,43 @@ php bin/composer.phar install
 
 ## Configuration
 
-As the module has to use Google OAuth2 a ClientId and ClientSecret for Google
-Content API is required. This can be generated in the 
+As the module has to use Google OAuth2, credentials for Google
+Content API are required. Those can be generated in the 
 http://console.developers.google.com/
 
-### Create a project in Google developers console
+You can choose between using a Client ID for web application or using a service account.
+If the Client ID for web application is used a manual user interaction is needed to provide
+access to Google Content API. In this case automated processes like cron jobs are not available.
+
+Using a service account is recommended and needed if you want to use automated processes.
+
+### Using Service account
+
+#### Create a project in Google developers console
+
+* Login to Google developers console or create an account
+* Create a Project
+  * Name: Magento-GoogleShoppingApi
+  * Project-ID: use the generated id or something like magento-gshopping-841
+* After the project is created go to "APIs & auth" -> "APIs"
+* Search for "Content API for Shopping" and enable it
+* Next go to "APIs & auth" -> "Credentials" and click "Create new Client ID"
+* Select "Service account"
+  * Select "P12 Key" as key type
+  * Click on "Create Client ID"
+  * Save the P12 file and write down the private key's password
+  
+#### Allow the service account to access your merchant center account
+  
+* Login to Google Merchant center
+* Go to Settings -> Users
+* Click on "+User"
+  * Enter the email address of your service account as "User email address" (*****@developer.gserviceaccount.com)
+  * Select "Standard access" as access level
+
+### Using Client ID for web application
+
+#### Create a project in Google developers console
 
 * Login to Google developers console or create an account
 * Create a Project
@@ -122,8 +155,12 @@ http://console.developers.google.com/
 BlueVisionTec Modules -> GoogleShoppingApi
 
   * Account-ID: Your GoogleShopping Merchant ID
+  * Use service account: Use Client ID for web application or Service account (as mentioned above)
   * Google Developer Project Client ID: The Client ID generated above
-  * Google Developer Project Client Secret: The Client Secret generated above
+  * Google Developer Project Client Secret: The Client Secret generated above (Client ID for web application only)
+  * Google Developer Project E-Mail: The E-Mail address from your credentials
+  * Google Developer Project Private Key file: upload the P12 file here (Service account only)
+  * Google Developer Project Private Key password: The private key's password (Service account only)
   * Target Country: The country for which you want to upload your products
   * Update Google Shopping Item when Product is Updated
 	* ~~Not implemented (observer disabled in current version, will be readded)~~

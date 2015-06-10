@@ -2,7 +2,7 @@
 <config>
   <modules>
     <BlueVisionTec_GoogleShoppingApi>
-      <version>0.2.1</version>
+      <version>0.2.2</version>
   </BlueVisionTec_GoogleShoppingApi>
   </modules>
   
@@ -149,6 +149,8 @@
         <autoremove_disabled>1</autoremove_disabled>
         <target_country>DE</target_country>
         <account_type>HOSTED_OR_GOOGLE</account_type>
+        <use_service_account>0</use_service_account>
+        <private_key_password>notasecret</private_key_password>
         
         <!-- Available target countries. Each country must have
         language code (ISO 639-1) and currency code (ISO 3166)

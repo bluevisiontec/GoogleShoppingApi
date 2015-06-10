@@ -41,6 +41,27 @@ class BlueVisionTec_GoogleShoppingApi_Model_Config extends Varien_Object
     }
 
     /**
+     * Use service account
+     *
+     * @param int $storeId
+     * @return bool
+     */
+    public function getUseServiceAccount($storeId = null) {
+        return $this->getConfigData('use_service_account', $storeId);
+    }
+    
+    /**
+     * Google Account ID
+     *
+     * @param int $storeId
+     * @return string
+     */
+    public function getPrivateKeyPassword($storeId = null)
+    {
+        return Mage::helper('core')->decrypt($this->getConfigData('private_key_password', $storeId));
+    }
+    
+    /**
      * Google Account ID
      *
      * @param int $storeId
