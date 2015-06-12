@@ -36,6 +36,10 @@ redirected to OAuth2 authentication.
 * adds Austria as target country
 * ability to set Google product category in Magento product details
 * ability to use OAuth2 service account
+* Automated daily sync to Google Content
+  * Option to enable by StoreView
+  * At the moment the products are synced every day at 02:30 (cron)
+  * Needs improvement in future versions (e.g. batch processing, option to set sync period)
 
 ## Installation
 

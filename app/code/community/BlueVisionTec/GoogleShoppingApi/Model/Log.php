@@ -66,7 +66,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Log extends Mage_Core_Model_Abstract
      * @return BlueVisionTec_GoogleShoppingApi_Model_Log
      */
     public function log($message, $lvl = BlueVisionTec_GoogleShoppingApi_Model_Log::INFO) {
-        Mage::log("STOREID".$this->getStoreId());
         $this->setLogLevel($lvl);
         $this->setMessage($message);
         $this->setCreatedAt(new Zend_Db_Expr('NOW()'));

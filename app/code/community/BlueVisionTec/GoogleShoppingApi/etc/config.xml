@@ -2,7 +2,7 @@
 <config>
   <modules>
     <BlueVisionTec_GoogleShoppingApi>
-      <version>0.2.2</version>
+      <version>0.2.3</version>
   </BlueVisionTec_GoogleShoppingApi>
   </modules>
   
@@ -74,6 +74,15 @@
           </adminhtml>
       </routers>
   </admin>
+  
+    <crontab>
+        <jobs>
+            <googleshoppingapi_cron_sync_products>
+            <schedule><cron_expr>30 2 * * *</cron_expr></schedule>
+            <run><model>googleshoppingapi/observer::syncProducts</model></run>
+            </googleshoppingapi_cron_sync_products>
+        </jobs>
+    </crontab>
   
   <adminhtml>
 	<translate>

@@ -61,7 +61,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
     public function addProducts($productIds, $storeId)
     {
-        Mage::log("storeid".$storeId);
         $this->_getLogger()->setStoreId($storeId);
         
         $totalAdded = 0;
@@ -189,6 +188,21 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
 
         return $this;
     }
+    
+    /**
+     * Synchronize all items of a stroe
+     *
+     * @param int $storeId
+     *
+     * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
+     */
+    public function synchronizeStoreItems($storeId) {
+    
+        $items = $this->_getItemsCollectionByStore($storeId);
+        $this->synchronizeItems($items);
+    
+        return $this;
+    }
 
     /**
      * Remove Google Content items.
@@ -268,6 +282,23 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 ->addFieldToFilter('item_id', $items);
         }
 
+        return $itemsCollection;
+    }
+    
+    /**
+     * Return items collection by StoreId
+     *
+     * @param int $storeId
+     * @throws Mage_Core_Exception
+     * @return null|BlueVisionTec_GoogleShoppingApi_Model_Resource_Item_Collection
+     */
+    protected function _getItemsCollectionByStore($storeId)
+    {
+        $itemsCollection = null;
+        if (is_numeric($storeId)) {
+            $itemsCollection = Mage::getResourceModel('googleshoppingapi/item_collection')
+                ->addStoreFilter($storeId);
+       }
         return $itemsCollection;
     }
 
