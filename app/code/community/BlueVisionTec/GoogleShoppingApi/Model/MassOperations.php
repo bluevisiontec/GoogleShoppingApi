@@ -148,7 +148,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 $removeInactive = $this->_getConfig()->getConfigData('autoremove_disabled',$item->getStoreId());
 				$renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
                 try {
-					if($removeInactive && ($item->getProduct()->isDisabled() || !$item->getProduct()->getStockItem()->getIsInStock() )) {
+					if($removeInactive && ($item->getProduct()->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED || !$item->getProduct()->getStockItem()->getIsInStock() )) {
 						$item->deleteItem();
 						$item->delete();
 						$totalDeleted++;
