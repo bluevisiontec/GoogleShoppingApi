@@ -160,6 +160,7 @@
         <account_type>HOSTED_OR_GOOGLE</account_type>
         <use_service_account>0</use_service_account>
         <private_key_password>notasecret</private_key_password>
+        <add_store_code_to_url>1</add_store_code_to_url>
         
         <!-- Available target countries. Each country must have
         language code (ISO 639-1) and currency code (ISO 3166)

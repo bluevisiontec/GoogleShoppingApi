@@ -28,9 +28,14 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
     {
         $url = $product->getProductUrl(false);
         if ($url) {
-            if (!Mage::getStoreConfigFlag('web/url/use_store')) {
+            $config = Mage::getSingleton('googleshoppingapi/config');
+            if (!Mage::getStoreConfigFlag('web/url/use_store') 
+                && $config->getAddStoreCodeToUrl()) {
+                
+                Mage::log($config->getAddStoreCodeToUrl() ? "true":"false");
                 $urlInfo = parse_url($url);
                 $store = $product->getStore()->getCode();
+                
                 if (isset($urlInfo['query']) && $urlInfo['query'] != '') {
                     $url .= '&___store=' . $store;
                 } else {
@@ -38,7 +43,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
                 }
             }
             
-            $config = Mage::getSingleton('googleshoppingapi/config');
 			if( $config->getAddUtmSrcGshopping($product->getStoreId()) ) {
 				$url .= '&utm_source=GoogleShopping';
 			}

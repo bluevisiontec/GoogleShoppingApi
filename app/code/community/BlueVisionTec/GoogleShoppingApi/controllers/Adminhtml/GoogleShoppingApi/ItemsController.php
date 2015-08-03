@@ -117,6 +117,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
 
         try {
             $flag->lock();
+            Mage::app()->setCurrentStore($storeId);
             Mage::getModel('googleshoppingapi/massOperations')
                 ->setFlag($flag)
                 ->addProducts($productIds, $storeId);
@@ -159,6 +160,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
 		
         try {
             $flag->lock();
+            Mage::app()->setCurrentStore($storeId);
             Mage::getModel('googleshoppingapi/massOperations')
                 ->setFlag($flag)
                 ->deleteItems($itemIds);
@@ -201,6 +203,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
 
         try {
             $flag->lock();
+            Mage::app()->setCurrentStore($storeId);
             Mage::getModel('googleshoppingapi/massOperations')
                 ->setFlag($flag)
                 ->synchronizeItems($itemIds);

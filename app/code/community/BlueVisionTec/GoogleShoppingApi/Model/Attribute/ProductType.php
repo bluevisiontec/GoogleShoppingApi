@@ -29,7 +29,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_ProductType extends BlueVi
 
         $productCategories = $product->getCategoryIds();
 
-        // TODO: set Default value for product_type attribute if product isn't assigned for any category
         $value = 'Shop';
 
         if (!empty($productCategories)) {
@@ -38,13 +37,16 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_ProductType extends BlueVi
             );
 
             $breadcrumbs = array();
-
+            
             foreach ($category->getParentCategories() as $cat) {
                 $breadcrumbs[] = $cat->getName();
             }
 
-            $value = implode(' > ', $breadcrumbs);
-//             Mage::log($value);
+             $value = implode(' > ', $breadcrumbs);
+            
+            if(!count($breadcrumbs)) {
+               $value = $category->getName();
+            }
         }
 
         $shoppingProduct->setProductType($value);
