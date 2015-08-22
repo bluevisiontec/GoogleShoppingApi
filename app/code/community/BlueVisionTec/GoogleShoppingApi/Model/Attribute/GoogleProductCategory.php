@@ -27,6 +27,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_GoogleProductCategory exte
     public function convertAttribute($product, $shoppingProduct)
     {   
 		// get category from product attribute
+		Mage::log(__LINE__.$product->getResource()->getAttribute('google_shopping_category'));
         $value = $product->getResource()->getAttribute('google_shopping_category')
         ->getFrontend()->getValue($product);
 		$value = preg_replace('/\d+ /','',$value);

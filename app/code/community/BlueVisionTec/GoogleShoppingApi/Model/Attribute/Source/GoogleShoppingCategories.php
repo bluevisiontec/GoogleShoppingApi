@@ -29,28 +29,30 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Source_GoogleShoppingCateg
         $taxonomyPath = Mage::getBaseDir() . self::TAXONOMY_FILE_PATH;
 
         $lang = Mage::getStoreConfig('general/locale/code',Mage::app()->getRequest()->getParam('store', 0));
-        $taxonomyFile = $taxonomyPath . "taxonomy.".$lang.".txt";
+        $taxonomyFile = $taxonomyPath . "taxonomy-with-ids.".$lang.".txt";
         
         if(!file_exists($taxonomyFile)) {
-			$taxonomyFile = $taxonomyPath . "taxonomy.en_US.txt";
+			$taxonomyFile = $taxonomyPath . "taxonomy-with-ids.en_US.txt";
         }
         
         if (is_null($this->_options)) {
         
+            $this->_options = array();
 			$this->_options[0] = array(
-				'value' => 1,
-				'label' => "1 Other"
+				'value' => 0,
+				'label' => "0 Other"
 			);
         
             if(($fh = fopen($taxonomyFile,"r")) !== false) {
                 $line = 0;
-                $this->_options = array();
                 while (($category = fgets($fh)) !== false) {
-                    if($line === 0) {$line++;continue;} // skip first line
                     $line++;
+                    if($line === 1) {continue;} // skip first line
+                    
+                    $option = explode(' - ',$category);
                     $this->_options[] = array(
-                        'value' => $line,
-                        'label' => $line ." ". trim($category)
+                        'value' => $option[0],
+                        'label' => $category
                     );
                 }
             }
