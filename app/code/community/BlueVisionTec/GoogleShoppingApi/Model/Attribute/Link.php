@@ -26,8 +26,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
      */
     public function convertAttribute($product, $shoppingProduct)
     {
-        $childId = $this->getProductId($product);
-	$childItem = Mage::getModel('catalog/product')->load($childId);
         $parentId = Mage::getModel('catalog/product_type_configurable')
                              ->getParentIdsByChild($product->getId());
         $parentItem = Mage::getModel('catalog/product')->load($parentId);
@@ -35,6 +33,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
 	$pCatId = array_reverse( $parentItem->getCategoryIds() );	
         $cCat = Mage::getModel('catalog/category')->load($cCatId[0]);
 	$pCat = Mage::getModel('catalog/category')->load($pCatId[0]);
+	$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
         if (!Mage::getStoreConfig('web/seo/use_rewrites')) {
             if($product->getTypeId() == 'simple' && $parentItem->getTypeId() == 'configurable' || 'bundle'  || 'grouped') {
                 $url = $parentItem->getProductUrl(false);
@@ -43,9 +42,9 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
             }
         } else {
             if($product->getTypeId() == 'simple' && $parentItem->getTypeId() == 'configurable' || 'bundle'  || 'grouped') {
-                $url = sprintf('%s%s', Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB), $parentItem->getUrlPath($pCat));
+                $url = "{$baseUrl}{$parentItem->getUrlPath($pCat)}";
             } else {
-                $url = sprintf('%s%s', Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB), $childItem->getUrlPath($cCat));
+                $url = "{$baseUrl}{$product->getUrlPath($cCat)}";
             }
         }
         if ($url) {
