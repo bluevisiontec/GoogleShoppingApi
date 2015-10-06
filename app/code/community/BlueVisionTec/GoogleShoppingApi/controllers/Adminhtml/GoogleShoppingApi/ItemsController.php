@@ -36,8 +36,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
      * Manage Items page with two item grids: Magento products and Google Content items
      */
     public function indexAction()
-    {
-
+    {$this->_getFlag()->unlock();
         $this->_title($this->__('Catalog'))
              ->_title($this->__('Google Content'))
              ->_title($this->__('Manage Items'));
@@ -185,6 +184,8 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
      */
     public function refreshAction()
     {
+    
+    $startTime = time();
 		$storeId = $this->_getStore()->getId();
 		
         $flag = $this->_getFlag();
@@ -206,7 +207,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
             Mage::app()->setCurrentStore($storeId);
             Mage::getModel('googleshoppingapi/massOperations')
                 ->setFlag($flag)
-                ->synchronizeItems($itemIds);
+                ->batchSynchronizeItems($itemIds);
         } catch (Exception $e) {
             $flag->unlock();
             $this->_getLogger()->addMajor(
@@ -218,7 +219,8 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
             return;
         }
         $flag->unlock();
-        
+        $duration = time() - $startTime;
+        Mage::log($duration."s");
         $this->_redirect('*/*/index', array('store'=>$storeId));
         return $this;
     }

@@ -6,7 +6,7 @@ IMPORTANT!
 
 If you are updating to 0.2.4 from an earlier version, please be aware that the
 category ids have changed. 
-There is a [shell script](shell/googleshopping_ataxonomy_mapping/Readme.md) 
+There is a [shell script](shell/googleshopping_taxonomy_mapping/Readme.md) 
 which might help you to map the old category ids to the new ones.
 
 Fortunately Google has added static category ids which makes it easier for 

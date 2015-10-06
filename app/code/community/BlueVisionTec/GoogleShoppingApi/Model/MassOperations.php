@@ -190,6 +190,122 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     }
     
     /**
+     * Update Google Content items.
+     *
+     * @param array|BlueVisionTec_GoogleShoppingApi_Model_Resource_Item_Collection $items
+     *
+     * @throws Mage_Core_Exception
+     * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
+     */
+    public function batchSynchronizeItems($items)
+    {
+        $totalUpdated = 0;
+        $totalDeleted = 0;
+        $totalFailed = 0;
+        $errors = array();
+        
+        $batchInsertProducts = array();
+
+        $itemsCollection = $this->_getItemsCollection($items);
+
+        if ($itemsCollection) {
+            if (count($itemsCollection) < 1) {
+                return $this;
+            }
+            foreach ($itemsCollection as $item) {
+                if ($this->_flag && $this->_flag->isExpired()) {
+                    break;
+                }
+                $this->_getLogger()->setStoreId($item->getStoreId());
+                $removeInactive = $this->_getConfig()->getConfigData('autoremove_disabled',$item->getStoreId());
+                $renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
+                try {
+                    if($removeInactive && ($item->getProduct()->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED || !$item->getProduct()->getStockItem()->getIsInStock() )) {
+                        $item->deleteItem();
+                        $item->delete();
+                        $totalDeleted++;
+                        Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
+                    } else {
+                        if(!isset($batchInsertProducts[$item->getStoreId()])) {
+                            $batchInsertProducts[$item->getStoreId()] = array();
+                        }
+                        $batchInsertProducts[$item->getStoreId()][$item->getId()] = $item->getType()->convertAttributes($item->getProduct());
+                    }
+                } catch (Mage_Core_Exception $e) {
+                    $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" cannot be updated at Google Content. %s', $item->getProduct()->getName(), $e->getMessage());
+                    $totalFailed++;
+                } catch (Exception $e) {
+                    // remove items which are not available on google content
+                    if($e->getCode() == "404") {
+                        $item->delete();
+                        $totalDeleted++;
+                        Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
+                    } else {                    
+                        Mage::logException($e);
+                        $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" hasn\'t been updated.', $item->getProduct()->getName());
+                        $errors[] = $e->getMessage();
+                        $totalFailed++;
+                    }
+                }
+            }
+            
+            if(count($batchInsertProducts) > 0 ) {
+                foreach($batchInsertProducts as $storeId => $products) {
+                    $result = Mage::getModel('googleshoppingapi/googleShopping')->productBatchInsert($products,$storeId);
+
+                    $resEntries = array();
+                    if($result) { // update expiration dates or collect errors
+                        foreach($result->getEntries() as $batchEntry) {
+                            $resEntries[$batchEntry->getBatchId()] = $batchEntry;
+                        }
+                        foreach($itemsCollection as $item) {
+                            
+                            if(!isset($resEntries[$item->getId()]) || !is_a($resEntries[$item->getId()],'Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry')) {
+                                $errors[] = $item->getId()." - missing response";
+                                continue;
+                            }
+                            
+                            if($resErrors = $resEntries[$item->getId()]->getErrors()) {
+                                foreach($resErrors->getErrors() as $resError) {
+                                    $totalFailed++;
+                                    $errors[] = $item->getId()." - ".$resError->getMessage();
+                                }
+                            } else {
+                                
+                                $expires = $this->convertContentDateToTimestamp(
+                                    $resEntries[$item->getId()]->getProduct()->getExpirationDate()
+                                );
+                                $item->setExpires($expires);
+                            }
+                        }
+                        $itemsCollection->save();
+                    }
+                }
+                
+                
+            }
+            
+        } else {
+            return $this;
+        }
+        if($totalDeleted > 0 || $totalUpdated > 0) {
+            $this->_getLogger()->addSuccess(
+                Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed') . "\n"
+                . Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
+            );
+        }
+        if ($totalFailed > 0 || count($errors)) {
+            array_unshift($errors, Mage::helper('googleshoppingapi')->__("Cannot update %s items.", $totalFailed));
+            $this->_getLogger()->addMajor(
+                Mage::helper('googleshoppingapi')->__('Errors happened during synchronization with Google Shopping'),
+                $errors
+            );
+        }
+
+        return $this;
+    }
+    
+    /**
      * Synchronize all items of a stroe
      *
      * @param int $storeId
@@ -265,6 +381,18 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         return $this;
     }
 
+    /**
+     * Convert Google Content date format to unix timestamp
+     * Ex. 2008-12-08T16:57:23Z -> 2008-12-08 16:57:23
+     *
+     * @param string Google Content datetime
+     * @return int
+     */
+    public function convertContentDateToTimestamp($gContentDate)
+    {
+        return Mage::getSingleton('core/date')->date(null, $gContentDate);
+    }
+    
     /**
      * Return items collection by IDs
      *

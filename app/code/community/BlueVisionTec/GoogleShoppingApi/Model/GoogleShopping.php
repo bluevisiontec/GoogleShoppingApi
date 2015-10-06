@@ -212,6 +212,44 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
 		return $result;
 		
     }
+    
+    /**
+     * @param array products
+     * @param integer store id
+     *
+     * @return array
+     */
+    public function productBatchInsert($products, $storeId = null) {
+    
+        $merchantId = $this->getConfig()->getConfigData('account_id',$storeId);
+        
+        $entries = array();
+
+        foreach($products as $itemId => $product) {
+
+            $product->setChannel("online");
+            $expDate = date("Y-m-d",(time()+30*24*60*60));//product expires in 30 days
+            $product->setExpirationDate($expDate);
+            
+            $entry = new Google_Service_ShoppingContent_ProductsCustomBatchRequestEntry();
+            
+            $entry->setBatchId($itemId);
+            $entry->setMerchantId($merchantId);
+            $entry->setMethod('insert');
+            $entry->setProduct($product);
+            
+            $entries[] = $entry;
+        }
+        
+        $batchReq = new Google_Service_ShoppingContent_ProductsCustomBatchRequest();
+        $batchReq->setEntries($entries);
+        
+        $result = $this->getShoppingService($storeId)->products->customBatch($batchReq);
+
+        return $result;
+        
+    }
+    
     /**
      * @param Google_Service_ShoppingContent_Product product
      * @param integer store id

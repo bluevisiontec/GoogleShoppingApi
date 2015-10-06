@@ -4,3 +4,4 @@ app/locale/de_DE/BlueVisionTec_GoogleShoppingApi.csv app/locale/de_DE/BlueVision
 var/bluevisiontec/googleshoppingapi/data/* var/bluevisiontec/googleshoppingapi/data/
 app/design/adminhtml/default/default/template/googleshoppingapi/* app/design/adminhtml/default/default/template/googleshoppingapi/
 app/design/adminhtml/default/default/layout/bluevisiontec/* app/design/adminhtml/default/default/layout/bluevisiontec/
+shell/* shell/
