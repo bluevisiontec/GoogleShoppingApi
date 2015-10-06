@@ -221,6 +221,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 $renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
                 try {
                     if($removeInactive && ($item->getProduct()->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED || !$item->getProduct()->getStockItem()->getIsInStock() )) {
+                        // TODO: batch delete
                         $item->deleteItem();
                         $item->delete();
                         $totalDeleted++;
@@ -251,8 +252,13 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
             
             if(count($batchInsertProducts) > 0 ) {
                 foreach($batchInsertProducts as $storeId => $products) {
-                    $result = Mage::getModel('googleshoppingapi/googleShopping')->productBatchInsert($products,$storeId);
-
+                    try {
+                        $result = Mage::getModel('googleshoppingapi/googleShopping')->productBatchInsert($products,$storeId);
+                    } catch(Exception $e) {
+                        $errors[] = "Failed to batch update for store ".$storeId.":".$e->getMessage();
+                        Mage::logException($e);
+                        Mage::log($e->getMessage());
+                    }
                     $resEntries = array();
                     if($result) { // update expiration dates or collect errors
                         foreach($result->getEntries() as $batchEntry) {
