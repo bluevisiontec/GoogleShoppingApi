@@ -214,3 +214,15 @@ BlueVisionTec Modules -> GoogleShoppingApi
 		* Manufacturer => Brand
 		
 ![GoogleShoppingAPI attribute mapping](docs/images/attribute-mapping.png)
+
+## Shell script
+
+**NOT YET READY FOR PRODUCTION**
+
+### Examples
+
+Sync all items in storeid 1
+
+```
+php -f shell/googleshopping.php -- --action syncitems --storeid 1
+```

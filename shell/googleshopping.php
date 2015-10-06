@@ -62,11 +62,65 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
             case 'setcategory':
                 return $this->setCategory();
                 break;
+            case 'syncitems':
+                return $this->syncItems();
+                break;
             default:
                 print $this->usageHelp();
                 return false;
         }
         
+    }
+    
+    /**
+     * sync items
+     */
+    protected function syncItems() {
+    
+        $start = time();
+    
+        $flag = $this->_getFlag();
+
+        if ($flag->isLocked()) {
+            echo "flag locked - synchronization process running\n";
+            return false;
+        }
+        
+        if($this->_storeId) {
+            $stores = array(
+                $this->_storeId => Mage::getModel('core/store')->load($this->_storeId)
+            );
+        } else {
+            $stores = Mage::app()->getStores();
+        }
+    
+        
+        foreach($stores as $_storeId => $_store) {
+            if(!$this->getConfig()->getConfigData('enable_autosync',$_storeId)) {
+                continue;
+            }
+            try {
+                $flag->lock();
+                Mage::getModel('googleshoppingapi/massOperations')
+                    ->setFlag($flag)
+                    ->synchronizeStoreItems($_storeId);
+            } catch (Exception $e) {
+                $flag->unlock();
+                $this->_getLogger()->addMajor(
+                    Mage::helper('googleshoppingapi')->__('An error has occured while syncing products with google shopping account.'),
+                    Mage::helper('googleshoppingapi')->__('One or more products were not synced to google shopping account. Refer to the log file for details.')
+                );
+                Mage::logException($e);
+                Mage::log($e->getMessage());
+                return;
+            }
+            $flag->unlock();
+            
+        }
+        
+        $duration = time() - $start;
+        
+        echo "Sync took $duration seconds\n";
     }
     
     /**
@@ -113,6 +167,26 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
             }
             $product->setGoogleShoppingCategory($this->_categoryId)->save();
         }
+    }
+    
+    /**
+     * Google Content Config
+     *
+     * @return BlueVisionTec_GoogleShoppingApi_Model_Config
+     */
+    public function getConfig()
+    {
+        return Mage::getSingleton('googleshoppingapi/config');
+    }
+    
+    /**
+     * Retrieve synchronization process mutex
+     *
+     * @return BlueVisionTec_GoogleShoppingApi_Model_Flag
+     */
+    protected function _getFlag()
+    {
+        return Mage::getSingleton('googleshoppingapi/flag')->loadSelf();
     }
     
     /**
