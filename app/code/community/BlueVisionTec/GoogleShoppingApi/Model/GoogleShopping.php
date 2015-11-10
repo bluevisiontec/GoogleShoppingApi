@@ -17,7 +17,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
 {
 
 	const APPNAME = 'BlueVisionTec Magento GoogleShopping';
-	const PRIVATE_KEY_UPLOAD_DIR = '/var/bluevisiontec/googleshoppingapi/oauth/';
+	const PRIVATE_KEY_UPLOAD_DIR = '/var/bluevisiontec/googleshoppingapi/';
 
 	/** 
 	 * @var Google_Client
