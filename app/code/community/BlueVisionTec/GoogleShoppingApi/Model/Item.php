@@ -82,8 +82,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Item extends Mage_Core_Model_Abstrac
     public function insertItem(Mage_Catalog_Model_Product $product)
     {
         $this->setProduct($product);
-        $this->getServiceItem()
-            ->insert($this);
+        $this->getServiceItem();
         $this->setTypeId($this->getType()->getTypeId());
 
         return $this;
