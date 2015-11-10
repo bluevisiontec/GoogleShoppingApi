@@ -21,6 +21,7 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Item extends Mage_Ad
     {
         parent::__construct();
         $this->setId('items');
+        $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
     }
 
@@ -48,18 +49,39 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Item extends Mage_Ad
      */
     protected function _prepareColumns()
     {
+
+        $this->addColumn('id', array(
+            'header'    => $this->__('ID'),
+            'sortable'  => true,
+            'width'     => '60px',
+            'index'     => 'item_id'
+        ));
+
         $this->addColumn('name',
             array(
                 'header'    => $this->__('Product Name'),
-                'width'     => '30%',
+                'column_css_class'=> 'name',
                 'index'     => 'name',
+        ));
+
+        $this->addColumn('product_id',
+            array(
+                'header'    => $this->__('Product ID'),
+                'sortable'  => true,
+                'width'     => '60px',
+                'index'     => 'product_id',
+        ));
+        $this->addColumn('gcontent_item_id',
+            array(
+                'header'    => $this->__('Google content item ID'),
+                'index'     => 'gcontent_item_id',
         ));
 
         $this->addColumn('expires',
             array(
                 'header'    => $this->__('Expires'),
                 'type'      => 'datetime',
-                'width'     => '100px',
+                'width'     => '150px',
                 'index'     => 'expires',
         ));
 
@@ -75,7 +97,6 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Item extends Mage_Ad
     {
         $this->setMassactionIdField('item_id');
         $this->getMassactionBlock()->setFormFieldName('item');
-        $this->setNoFilterMassactionColumn(true);
 
         $this->getMassactionBlock()->addItem('delete', array(
              'label'    => $this->__('Delete'),
