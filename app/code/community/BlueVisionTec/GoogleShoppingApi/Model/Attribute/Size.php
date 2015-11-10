@@ -15,7 +15,7 @@
  * @author     Magento Core Team <core@magentocommerce.com>
  * @author     BlueVisionTec UG (haftungsbeschränkt) <magedev@bluevisiontec.eu>
  */
-class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Size extends BlueVisionTec_GoogleShoppingApi_Model_Attribute
+class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Size extends BlueVisionTec_GoogleShoppingApi_Model_Attribute_Default
 {
     
 	/**
@@ -37,9 +37,8 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Size extends BlueVisionTec
 		} else {
 			$value[] = $this->getProductAttributeValue($product);
 		}
-		
 
-		$shoppingProduct->setSizes(array($value));
+		$shoppingProduct->setSizes($value);
 		return $shoppingProduct;
 	}
 
