@@ -45,7 +45,10 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Default extends BlueVision
         $value = $this->getProductAttributeValue($product);
 
         if (!is_null($value)) {
-			$name = Google_Utils::camelCase($this->getName());
+            //$name = Google_Utils::camelCase($this->getName());
+            $name = ucwords(str_replace(array('-', '_'), ' ', $this->getName()));
+            $name = str_replace(' ', '', $name);
+            $name[0] = strtolower($name[0]);
             $shoppingProduct->offsetSet($name,$value);
         }
         

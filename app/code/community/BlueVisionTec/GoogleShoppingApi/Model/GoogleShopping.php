@@ -1,5 +1,4 @@
 <?php
-require_once Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php';
 /**
  * @category	BlueVisionTec
  * @package     BlueVisionTec_GoogleShoppingApi
@@ -81,74 +80,34 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
     {
         $useServiceAccount = $this->getConfig()->getUseServiceAccount($storeId);
         
-		if(isset($this->_client)) {
-			if($this->_client->isAccessTokenExpired()) {
+        if(isset($this->_client)) {
+            if($this->_client->isAccessTokenExpired()) {
                 if($useServiceAccount) {
                     $client->getAuth()->refreshTokenWithAssertion();
                 } else {
                     return $this->redirectToAuth($storeId,$noAuthRedirect);
                 }
-			}
-			return $this->_client;
-		}
+            }
+            return $this->_client;
+        }
     
-		$adminSession = Mage::getSingleton('admin/session');
+        $adminSession = Mage::getSingleton('admin/session');
 
- 		$accessTokens = $adminSession->getGoogleOAuth2Token();
+        $accessTokens = $adminSession->getGoogleOAuth2Token();
 
- 		$clientId = $this->getConfig()->getConfigData('client_id',$storeId);
-		$clientSecret = $this->getConfig()->getConfigData('client_secret',$storeId);
-		$clientEmail =  $this->getConfig()->getConfigData('client_email',$storeId);
-		$privateKeyFile = Mage::getBaseDir().self::PRIVATE_KEY_UPLOAD_DIR.$this->getConfig()->getConfigData('private_key_file',$storeId);
-		$privateKeyPassword = $this->getConfig()->getPrivateKeyPassword($storeId);
-		
-
-        $privateKey = file_get_contents($privateKeyFile);
-        $credentials = new Google_Auth_AssertionCredentials(
-            $clientEmail,
-            array('https://www.googleapis.com/auth/content'),
-            $privateKey,
-            $privateKeyPassword
-        );
-		
-		$accessToken = $accessTokens[$clientId];
-
-		if(!$clientId || (!$clientSecret && !$useServiceAccount) ) {
-			Mage::getSingleton('adminhtml/session')->addError("Please specify Google Content API access data for this store!");
-			return false;
-			
- 		}
- 		
- 		if(!$useServiceAccount) {
-            if(!isset($accessToken) || empty($accessToken) ) {
-                return $this->redirectToAuth($storeId,$noAuthRedirect);
-            }
-		}
+        $clientId = $this->getConfig()->getConfigData('client_id',$storeId);
+        $privateKeyFile = Mage::getBaseDir().self::PRIVATE_KEY_UPLOAD_DIR.$this->getConfig()->getConfigData('private_key_file',$storeId);
     
-		$client = new Google_Client();
-		$client->setApplicationName(self::APPNAME);
-		$client->setClientId($clientId);
-		
-		$client->setScopes('https://www.googleapis.com/auth/content');
-		
-		
-		if($useServiceAccount) {
-            $client->setClassConfig('Google_Cache_File',array('directory' => Mage::getBaseDir().'/var/cache/bluevisiontec/googleshoppingapi/googleapi/'));
-            $client->setAssertionCredentials($credentials);
-             if ($client->getAuth()->isAccessTokenExpired()) {
-                $client->getAuth()->refreshTokenWithAssertion();
-            }
-		} else {
-            $client->setAccessToken($accessToken);
-            $client->setClientSecret($clientSecret);
-            if($client->isAccessTokenExpired()) {
-                return $this->redirectToAuth($storeId,$noAuthRedirect);
-            }
-		}
-		
-		$this->_client = $client;
-		
-		return $this->_client;
+        $client = new Google_Client();
+        $client->setAuthConfig($privateKeyFile);
+        $client->setApplicationName(self::APPNAME);
+        $client->setClientId($clientId);
+        
+        $client->setScopes('https://www.googleapis.com/auth/content');
+        
+        $this->_client = $client;
+        
+        return $this->_client;
     }
     
     /**

@@ -156,7 +156,7 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                 </custom_url_parameters>
-                <use_service_account translate="label">
+                <!--use_service_account translate="label">
                     <label>Use service account</label>
                     <frontend_type>select</frontend_type>
                     <source_model>adminhtml/system_config_source_yesno</source_model>
@@ -190,19 +190,19 @@
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
-                </client_email>
+                </client_email-->
                 <private_key_file translate="label">
                     <label>Google Developer Project Private Key file</label>
                     <frontend_type>file</frontend_type>
                     <backend_model>adminhtml/system_config_backend_file</backend_model>
-                    <upload_dir>var/bluevisiontec/googleshoppingapi/oauth/</upload_dir>
+                    <upload_dir>var/bluevisiontec/googleshoppingapi/</upload_dir>
                     <sort_order>22</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <depends><use_service_account>1</use_service_account></depends>
                 </private_key_file>
-                <private_key_password translate="label">
+                <!--private_key_password translate="label">
                     <label>Google Developer Project Private Key password</label>
                     <frontend_type>text</frontend_type>
                     <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
@@ -211,7 +211,7 @@
                     <show_in_website>1</show_in_website>
                     <show_in_store>1</show_in_store>
                     <depends><use_service_account>1</use_service_account></depends>
-                </private_key_password>
+                </private_key_password-->
                 <autorenew_notlisted translate="label">
                     <label>Renew not listed items</label>
                     <frontend_type>select</frontend_type>
