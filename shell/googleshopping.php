@@ -103,7 +103,7 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
                 $flag->lock();
                 Mage::getModel('googleshoppingapi/massOperations')
                     ->setFlag($flag)
-                    ->synchronizeStoreItems($_storeId);
+                    ->batchSynchronizeStoreItems($_storeId);
             } catch (Exception $e) {
                 $flag->unlock();
                 $this->_getLogger()->addMajor(

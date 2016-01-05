@@ -325,6 +325,21 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     
         return $this;
     }
+    
+    /**
+     * Synchronize all items of a stroe
+     *
+     * @param int $storeId
+     *
+     * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
+     */
+    public function batchSynchronizeStoreItems($storeId) {
+    
+        $items = $this->_getItemsCollectionByStore($storeId);
+        $this->synchronizeItems($items);
+    
+        return $this;
+    }
 
     /**
      * Remove Google Content items.
