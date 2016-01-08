@@ -11,7 +11,19 @@
 		}
 	],
 	"require": {
-		"magento-hackathon/magento-composer-installer": "*",
 		"google/apiclient": "*"
+	},
+	"extra": {
+		"map": [
+			["app/code/community/BlueVisionTec/GoogleShoppingApi", "app/code/community/BlueVisionTec/GoogleShoppingApi"],
+			["app/etc/modules/BlueVisionTec_GoogleShoppingApi.xml", "app/etc/modules/BlueVisionTec_GoogleShoppingApi.xml"],
+			["var/bluevisiontec/googleshoppingapi/data", "var/bluevisiontec/googleshoppingapi/data"],
+			["app/design/adminhtml/default/default/template/googleshoppingapi", "app/design/adminhtml/default/default/template/googleshoppingapi"],
+			["app/design/adminhtml/default/default/layout/bluevisiontec", "app/design/adminhtml/default/default/layout/bluevisiontec"],
+			["js/bluevisiontec/adminhtml/googleshopping.js", "js/bluevisiontec/adminhtml/googleshopping.js"],
+			["shell/googleshopping.php", "shell/googleshopping.php"],
+			["shell/googleshopping_taxonomy_mapping.php", "shell/googleshopping_taxonomy_mapping.php"],
+			["shell/googleshopping_taxonomy_mapping", "shell/googleshopping_taxonomy_mapping"]
+		]
 	}
 }
