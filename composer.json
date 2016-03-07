@@ -12,6 +12,6 @@
 	],
 	"require": {
 		"magento-hackathon/magento-composer-installer": "*",
-		"google/apiclient": "*"
+		"google/apiclient": "1.1.7"
 	}
 }
