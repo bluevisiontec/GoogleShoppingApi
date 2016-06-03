@@ -334,10 +334,25 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
     public function batchSynchronizeStoreItems($storeId) {
-    
+
         $items = $this->_getItemsCollectionByStore($storeId);
         $this->synchronizeItems($items);
-    
+
+        return $this;
+    }
+
+    /**
+     * Synchronize all items of a stroe
+     *
+     * @param int $storeId
+     *
+     * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
+     */
+    public function batchAddStoreItems($storeId) {
+
+        $items = $this->_getUnsyncedItemsCollectionByStore($storeId);
+        $this->addProducts($items,$storeId);
+
         return $this;
     }
 
@@ -449,6 +464,23 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 ->addStoreFilter($storeId);
        }
         return $itemsCollection;
+    }
+
+    /**
+     * Return unsynced items collection by StoreId
+     *
+     * @param int $storeId
+     * @throws Mage_Core_Exception
+     * @return null|BlueVisionTec_GoogleShoppingApi_Model_Resource_Item_Collection
+     */
+    protected function _getUnsyncedItemsCollectionByStore($storeId)
+    {
+        $productIds = array();
+        if (is_numeric($storeId)) {
+            $m = Mage::helper('googleshoppingapi/product')->buildAvailableProductItems(Mage::app()->getStore($storeId));
+            $productIds = $m->getAllIds();
+        }
+        return $productIds;
     }
 
     /**

@@ -80,4 +80,48 @@ class BlueVisionTec_GoogleShoppingApi_Helper_Product extends Mage_Core_Helper_Ab
             return $attribute->getAttributeCode();
         }
     }
+
+    public function buildAvailableProductItems($store)
+    {
+        /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
+        $collection = Mage::getModel('catalog/product')->getCollection()
+            ->setStore($store)
+            ->addAttributeToSelect('name')
+            ->addAttributeToSelect('sku')
+            ->addAttributeToSelect('price')
+            ->addAttributeToSelect('status')
+            ->addAttributeToSelect('attribute_set_id');
+
+        if ($store->getId()) {
+            $collection->addStoreFilter($store);
+        }
+
+        $excludeIds = $this->_getGoogleShoppingProductIds($store);
+        if ($excludeIds) {
+            $collection->addIdFilter($excludeIds, true);
+        }
+
+        $collection->setPageSize(10); //TODO debug
+
+        Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);
+        return $collection;
+    }
+
+    /**
+     * Get array with product ids, which was exported to Google Content
+     *
+     * @param Mage_Core_Model_Store $store
+     * @return array
+     */
+    protected function _getGoogleShoppingProductIds(Mage_Core_Model_Store $store)
+    {
+        $collection = Mage::getResourceModel('googleshoppingapi/item_collection')
+            ->addStoreFilter($store->getId())
+            ->load();
+        $productIds = array();
+        foreach ($collection as $item) {
+            $productIds[] = $item->getProductId();
+        }
+        return $productIds;
+    }
 }

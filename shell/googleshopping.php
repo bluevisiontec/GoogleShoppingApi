@@ -65,6 +65,9 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
             case 'syncitems':
                 return $this->syncItems();
                 break;
+            case 'additems':
+                return $this->additems();
+                break;
             default:
                 print $this->usageHelp();
                 return false;
@@ -188,6 +191,79 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
     {
         return Mage::getSingleton('googleshoppingapi/flag')->loadSelf();
     }
+
+    /**
+     * Parse .htaccess file and apply php settings to shell script
+     * //Hack to look into /shell folder instead of magento root dir
+     */
+    protected function _applyPhpVariables()
+    {
+        $htaccess = getcwd() . DS . '.htaccess';
+        if (file_exists($htaccess)) {
+            // parse htaccess file
+            $data = file_get_contents($htaccess);
+            $matches = array();
+            preg_match_all('#^\s+?php_value\s+([a-z_]+)\s+(.+)$#siUm', $data, $matches, PREG_SET_ORDER);
+            if ($matches) {
+                foreach ($matches as $match) {
+                    @ini_set($match[1], str_replace("\r", '', $match[2]));
+                }
+            }
+            preg_match_all('#^\s+?php_flag\s+([a-z_]+)\s+(.+)$#siUm', $data, $matches, PREG_SET_ORDER);
+            if ($matches) {
+                foreach ($matches as $match) {
+                    @ini_set($match[1], str_replace("\r", '', $match[2]));
+                }
+            }
+        }
+    }
+
+    protected function additems() {
+        $start = time();
+
+        $flag = $this->_getFlag();
+
+        if ($flag->isLocked()) {
+            echo "flag locked - synchronization process running\n";
+            return false;
+        }
+
+        if($this->_storeId) {
+            $stores = array(
+                $this->_storeId => Mage::getModel('core/store')->load($this->_storeId)
+            );
+        } else {
+            $stores = Mage::app()->getStores();
+        }
+
+
+        foreach($stores as $_storeId => $_store) {
+            if(!$this->getConfig()->getConfigData('enable_autosync',$_storeId)) {
+                continue;
+            }
+            try {
+//                $flag->lock(); //TODO debug
+                /** @var BlueVisionTec_GoogleShoppingApi_Model_MassOperations $mo */
+                $mo = Mage::getModel('googleshoppingapi/massOperations')
+                    ->setFlag($flag)
+                    ->batchAddStoreItems($_storeId);
+            } catch (Exception $e) {
+                $flag->unlock();
+                $this->_getLogger()->addMajor(
+                    Mage::helper('googleshoppingapi')->__('An error has occured while syncing products with google shopping account.'),
+                    Mage::helper('googleshoppingapi')->__('One or more products were not synced to google shopping account. Refer to the log file for details.')
+                );
+                Mage::logException($e);
+                Mage::log($e->getMessage());
+                return;
+            }
+//            $flag->unlock(); //TODO debug
+        }
+
+        $duration = time() - $start;
+
+        echo "Sync took $duration seconds\n";
+    }
     
     /**
      * print usage information
@@ -195,12 +271,13 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
     public function usageHelp()
     {
         return <<<USAGE
-Usage:  php -f googleshopping_taxonomy_mapping.php -- [options] --productid [int]
+Usage:  php -f googleshopping.php -- --action <actionname> [options]
  
   action                (s|g)etcategory|syncitems|deleteitems|additems
-  productids            Comma separated Ids of products or single product id
-  store                 Id of Store (default = all)
-  categoryid            Id of GoogleShopping category
+  options:
+      productids            Comma separated Ids of products or single product id
+      store                 Id of Store (default = all)
+      categoryid            Id of GoogleShopping category
   help                  This help
  
 USAGE;

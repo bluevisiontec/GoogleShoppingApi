@@ -86,7 +86,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
     /**
      * Retrieve synchronization process mutex
      *
-     * @return lueVisionTec_GoogleShoppingApi_Model_Flag
+     * @return BlueVisionTec_GoogleShoppingApi_Model_Flag
      */
     protected function _getFlag()
     {
