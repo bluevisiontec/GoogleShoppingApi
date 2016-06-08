@@ -46,16 +46,10 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Product
 	 */
 	protected function _prepareCollection()
 	{
-        $this->setCollection(Mage::helper('googleshoppingapi/product')->buildAvailableProductItems($this->_getStore()));
+		$collection = Mage::helper('googleshoppingapi/product')->buildAvailableProductItems($this->_getStore());
+        $this->setCollection($collection);
 		return parent::_prepareCollection();
 	}
-
-    public function getCollection() {
-        if(null === $this->_collection) {
-            $this->_prepareCollection();
-        }
-        parent::getCollection();
-    }
 
 	/**
 	 * Prepare grid columns
