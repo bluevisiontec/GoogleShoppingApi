@@ -18,23 +18,27 @@
  */
 /** @var $installer Mage_Core_Model_Resource_Setup */
 
-$installer = $this;
 
-$attributeCode = 'google_shopping_auto_update';
+$setup = Mage::getResourceModel('catalog/setup', 'core_setup');
+try {
+    $setup->startSetup();
+    $attributeCode = 'google_shopping_auto_update';
+    $setup->removeAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode);
 
-$installer->removeAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode);
+    $installer->addAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode, array(
+        'type' => 'int',
+        'input' => 'select',
+        'label' => 'Google Shopping: Auto Update(Add/Sync)?',
+        'source' => 'eav/entity_attribute_source_boolean',
+        'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
+        'user_defined' => true,
+        'required' => false,
+        'group' => 'Google Shopping',
+        'default' => 1,
+        'default_value' => 1,
+    ));
 
-$installer->addAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode, array(
-    'type' => 'int',
-    'input' => 'select',
-    'label' => 'Google Shopping: Auto Update(Add/Sync)?',
-    'source' => 'eav/entity_attribute_source_boolean',
-    'global' => Mage_Catalog_Model_Resource_Eav_Attribute::SCOPE_STORE,
-    'user_defined' => true,
-    'required' => false,
-    'group' => 'Google Shopping',
-    'default' => 1,
-    'default_value' => 1,
-));
-
-$installer->endSetup();
+    $setup->endSetup();
+} catch (Mage_Core_Exception $e) {
+    print_r($e->getMessage());
+}
