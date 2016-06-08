@@ -25,7 +25,7 @@ try {
     $attributeCode = 'google_shopping_auto_update';
     $setup->removeAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode);
 
-    $installer->addAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode, array(
+    $setup->addAttribute(Mage_Catalog_Model_Product::ENTITY, $attributeCode, array(
         'type' => 'int',
         'input' => 'select',
         'label' => 'Google Shopping: Auto Update(Add/Sync)?',
