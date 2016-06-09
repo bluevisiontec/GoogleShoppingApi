@@ -23,6 +23,7 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Product
 		parent::__construct();
 		$this->setId('googleShoppingApi_selection_search_grid');
 		$this->setDefaultSort('id');
+		$this->setSaveParametersInSession(true);
 		$this->setUseAjax(true);
 	}
 
@@ -96,7 +97,7 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Product
 		$this->addColumn('type',
 			array(
 				'header'=> Mage::helper('catalog')->__('Type'),
-				'width' => '60px',
+				'width' => '150px',
 				'index' => 'type_id',
 				'type'  => 'options',
 				'options' => Mage::getSingleton('catalog/product_type')->getOptionArray(),
@@ -113,7 +114,6 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Product
 
 		$this->addColumn('sku', array(
 			'header'    => Mage::helper('sales')->__('SKU'),
-			'width'     => '80px',
 			'index'     => 'sku',
 			'column_css_class'=> 'sku'
 		));
