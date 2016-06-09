@@ -90,7 +90,8 @@ class BlueVisionTec_GoogleShoppingApi_Helper_Product extends Mage_Core_Helper_Ab
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('price')
             ->addAttributeToSelect('status')
-            ->addAttributeToSelect('attribute_set_id');
+            ->addAttributeToSelect('attribute_set_id')
+        ->addFieldtoFilter('google_shopping_auto_update', array('eq'=>'1'));
 
         if ($store->getId()) {
             $collection->addStoreFilter($store);
@@ -100,8 +101,6 @@ class BlueVisionTec_GoogleShoppingApi_Helper_Product extends Mage_Core_Helper_Ab
         if ($excludeIds) {
             $collection->addIdFilter($excludeIds, true);
         }
-
-        $collection->setPageSize(10); //TODO debug
 
         Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);
         return $collection;

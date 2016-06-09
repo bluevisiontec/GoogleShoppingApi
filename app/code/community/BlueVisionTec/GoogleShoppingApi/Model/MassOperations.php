@@ -76,7 +76,9 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                         ->load($productId);
 
                     if ($product->getId()) {
-                        Mage::getModel('googleshoppingapi/item')
+                        /** @var BlueVisionTec_GoogleShoppingApi_Model_Item $item */
+                        $item = Mage::getModel('googleshoppingapi/item');
+                        $item
                             ->insertItem($product)
                             ->save();
                         // The product was added successfully
@@ -327,7 +329,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     }
     
     /**
-     * Synchronize all items of a stroe
+     * Synchronize all items of a store
      *
      * @param int $storeId
      *
@@ -342,7 +344,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     }
 
     /**
-     * Synchronize all items of a stroe
+     * Synchronize all items of a store
      *
      * @param int $storeId
      *
@@ -460,6 +462,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     {
         $itemsCollection = null;
         if (is_numeric($storeId)) {
+            /** @var BlueVisionTec_GoogleShoppingApi_Model_Resource_Item_Collection $itemsCollection */
             $itemsCollection = Mage::getResourceModel('googleshoppingapi/item_collection')
                 ->addStoreFilter($storeId);
        }
@@ -477,8 +480,10 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     {
         $productIds = array();
         if (is_numeric($storeId)) {
-            $m = Mage::helper('googleshoppingapi/product')->buildAvailableProductItems(Mage::app()->getStore($storeId));
-            $productIds = $m->getAllIds();
+            /** @var BlueVisionTec_GoogleShoppingApi_Helper_Product $helperModel */
+            $helperModel = Mage::helper('googleshoppingapi/product');
+            $collection = $helperModel->buildAvailableProductItems(Mage::app()->getStore($storeId));
+            $productIds = $collection->getAllIds();
         }
         return $productIds;
     }
