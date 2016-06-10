@@ -1,5 +1,14 @@
 <?php
-require_once Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php';
+if(file_exists(Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php')) { //vendor path within magento installation dir
+
+    require_once Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php';
+} elseif(file_exists(Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/autoload.php')) { //vendor path outside magento installation dir
+
+    set_include_path(get_include_path() . PATH_SEPARATOR . Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/');
+    require_once Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/autoload.php';
+} else {
+    Mage::throwException('Cannot find Google Content API autoload file');
+}
 /**
  * @category	BlueVisionTec
  * @package     BlueVisionTec_GoogleShoppingApi
