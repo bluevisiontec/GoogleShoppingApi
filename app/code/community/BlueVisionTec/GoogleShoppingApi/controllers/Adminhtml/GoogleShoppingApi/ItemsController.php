@@ -119,7 +119,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
             Mage::app()->setCurrentStore($storeId);
             Mage::getModel('googleshoppingapi/massOperations')
                 ->setFlag($flag)
-                ->addProducts($productIds, $storeId);
+                ->batchAddProducts($productIds, $storeId);
         } catch (Exception $e) {
             $flag->unlock();
             $this->_getLogger()->addMajor(
@@ -162,7 +162,7 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
             Mage::app()->setCurrentStore($storeId);
             Mage::getModel('googleshoppingapi/massOperations')
                 ->setFlag($flag)
-                ->deleteItems($itemIds);
+                ->batchDeleteItems($itemIds);
         } catch (Exception $e) {
             $flag->unlock();
             $this->_getLogger()->addMajor(

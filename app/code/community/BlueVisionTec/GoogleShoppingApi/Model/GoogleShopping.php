@@ -258,6 +258,36 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
         return $result;
         
     }
+
+    /**
+     * @param array products
+     * @param integer store id
+     *
+     * @return array
+     */
+    public function productBatchDelete($products, $storeId = null) {
+    
+        $merchantId = $this->getConfig()->getConfigData('account_id',$storeId);
+        
+        $entries = array();
+
+        foreach($products as $itemId => $product) {
+            $entry = new Google_Service_ShoppingContent_ProductsCustomBatchRequestEntry();
+            $entry->setBatchId($itemId);
+            $entry->setMerchantId($merchantId);
+            $entry->setMethod('delete');
+            $entry->setProductId($product);
+            
+            $entries[] = $entry;
+        }
+        $batchReq = new Google_Service_ShoppingContent_ProductsCustomBatchRequest();
+        $batchReq->setEntries($entries);
+        
+        $result = $this->getShoppingService($storeId)->products->customBatch($batchReq);
+
+        return $result;
+        
+    }
     
     /**
      * @param Google_Service_ShoppingContent_Product product

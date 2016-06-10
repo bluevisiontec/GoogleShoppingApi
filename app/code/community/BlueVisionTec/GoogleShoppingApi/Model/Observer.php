@@ -60,7 +60,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Observer
 		$items = $this->_getItemsCollection($product);
 
 		Mage::getModel('googleshoppingapi/massOperations')
-			->synchronizeItems($items);
+			->batchSynchronizeItems($items);
 
 		return $this;
 	}
@@ -77,7 +77,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Observer
 		$items = $this->_getItemsCollection($product);
 
 		Mage::getModel('googleshoppingapi/massOperations')
-			->deleteItems($items);
+			->batchDeleteItems($items);
 
 		return $this;
 	}

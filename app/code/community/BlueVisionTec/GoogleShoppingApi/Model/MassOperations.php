@@ -59,40 +59,84 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      * @throws Mage_Core_Exception
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
-    public function addProducts($productIds, $storeId)
+    public function batchAddProducts($productIds, $storeId)
     {
         $this->_getLogger()->setStoreId($storeId);
         
         $totalAdded = 0;
+        $totalFailed = 0;
+        $itemIds = 0;
+
+        $batchInsertProducts = array();
+        $itemsCollection = array();
+
         $errors = array();
         if (is_array($productIds)) {
             foreach ($productIds as $productId) {
                 if ($this->_flag && $this->_flag->isExpired()) {
                     break;
                 }
-                try {
-                    $product = Mage::getModel('catalog/product')
-                        ->setStoreId($storeId)
-                        ->load($productId);
+                $product = Mage::getModel('catalog/product')
+                    ->setStoreId($storeId)
+                    ->load($productId);
 
-                    if ($product->getId()) {
-                        Mage::getModel('googleshoppingapi/item')
-                            ->insertItem($product)
-                            ->save();
-                        // The product was added successfully
-                        $totalAdded++;
-                    } 
-                } catch (Mage_Core_Exception $e) {
-                    $errors[] = Mage::helper('googleshoppingapi')->__('The product "%s" cannot be added to Google Content. %s', $product->getName(), $e->getMessage());
-                } catch (Exception $e) {
-                    Mage::logException($e);
-                    $errors[] = Mage::helper('googleshoppingapi')->__('The product "%s" hasn\'t been added to Google Content.', $product->getName());
-                    $errors[] = $e->getMessage();
-                }
+                if ($product->getId()) {
+
+                    $item = Mage::getModel('googleshoppingapi/item')->insertItem($product);
+
+                    $itemsCollection[$itemIds] = $item;
+                    $batchInsertProducts[$item->getStoreId()][$itemIds] = $item->getType()->convertAttributes($item->getProduct());
+
+                    // The product was added successfully
+                    $itemIds++;
+                } 
             }
             if (empty($productIds)) {
                 return $this;
             }
+
+            if(count($batchInsertProducts) > 0 ) {
+                foreach($batchInsertProducts as $storeId => $products) {
+                    try {
+                        $insertResult = Mage::getModel('googleshoppingapi/googleShopping')->productBatchInsert($products,$storeId);
+                    } catch(Exception $e) {
+                        $errors[] = "Failed to batch update for store ".$storeId.":".$e->getMessage();
+                        Mage::logException($e);
+                        Mage::log($e->getMessage());
+                    }
+                    $resEntries = array();
+                    if($insertResult) { // update expiration dates or collect errors
+                        foreach($insertResult->getEntries() as $batchEntry) {
+                            $resEntries[$batchEntry->getBatchId()] = $batchEntry;
+                        }
+                        foreach($itemsCollection as $itemId => $item) {
+                            if(isset($products[$itemId])){
+                                if(!isset($resEntries[$itemId]) || !is_a($resEntries[$itemId],'Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry')) {
+                                    $errors[] = $item->getProduct()->getSku().' - '.$item->getProduct()->getTitle()." - missing response";
+                                    continue;
+                                }
+                                
+                                if($resErrors = $resEntries[$itemId]->getErrors()) {
+                                    foreach($resErrors->getErrors() as $resError) {
+                                        $totalFailed++;
+                                        $errors[] = $item->getProduct()->getSku().' - '.$item->getProduct()->getTitle()." - ".$resError->getMessage();
+                                    }
+                                } else {
+                                    
+                                    $expires = $this->convertContentDateToTimestamp(
+                                        $resEntries[$itemId]->getProduct()->getExpirationDate()
+                                    );
+                                    $item->setExpires($expires);
+                                    $item->setGcontentItemId($resEntries[$itemId]->getProduct()->getId());
+                                    $item->save();
+                                    $totalAdded++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         if ($totalAdded > 0) {
@@ -102,9 +146,10 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
             );
         }
 
-        if (count($errors)) {
+        if ($totalFailed > 0 || count($errors)) {
+            array_unshift($errors, Mage::helper('googleshoppingapi')->__("Cannot insert %s items.", $totalFailed));
             $this->_getLogger()->addMajor(
-                Mage::helper('googleshoppingapi')->__('Errors happened while adding products to Google Shopping.'),
+                Mage::helper('googleshoppingapi')->__('Errors happened while adding products with Google Shopping'),
                 $errors
             );
         }
@@ -113,76 +158,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
             $this->_getLogger()->addMajor(
                 Mage::helper('googleshoppingapi')->__('Operation of adding products to Google Shopping expired.'),
                 Mage::helper('googleshoppingapi')->__('Some products may have not been added to Google Shopping bacause of expiration')
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * Update Google Content items.
-     *
-     * @param array|BlueVisionTec_GoogleShoppingApi_Model_Resource_Item_Collection $items
-     *
-     * @throws Mage_Core_Exception
-     * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
-     */
-    public function synchronizeItems($items)
-    {
-        $totalUpdated = 0;
-        $totalDeleted = 0;
-        $totalFailed = 0;
-        $errors = array();
-
-        $itemsCollection = $this->_getItemsCollection($items);
-
-        if ($itemsCollection) {
-            if (count($itemsCollection) < 1) {
-                return $this;
-            }
-            foreach ($itemsCollection as $item) {
-                if ($this->_flag && $this->_flag->isExpired()) {
-                    break;
-                }
-                $this->_getLogger()->setStoreId($item->getStoreId());
-                $removeInactive = $this->_getConfig()->getConfigData('autoremove_disabled',$item->getStoreId());
-				$renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
-                try {
-					if($removeInactive && ($item->getProduct()->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED || !$item->getProduct()->getStockItem()->getIsInStock() )) {
-						$item->deleteItem();
-						$item->delete();
-						$totalDeleted++;
-						Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
-					} else {
-						$item->updateItem();
-						$item->save();
-						// The item was updated successfully
-						$totalUpdated++;
-					}
-                } catch (Mage_Core_Exception $e) {
-                    $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" cannot be updated at Google Content. %s', $item->getProduct()->getName(), $e->getMessage());
-                    $totalFailed++;
-                } catch (Exception $e) {
-                    Mage::logException($e);
-                    $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" hasn\'t been updated.', $item->getProduct()->getName());
-                    $errors[] = $e->getMessage();
-                    $totalFailed++;
-                }
-            }
-        } else {
-            return $this;
-        }
-        if($totalDeleted > 0 || $totalUpdated > 0) {
-            $this->_getLogger()->addSuccess(
-                Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed') . "\n"
-                . Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
-            );
-        }
-        if ($totalFailed > 0 || count($errors)) {
-            array_unshift($errors, Mage::helper('googleshoppingapi')->__("Cannot update %s items.", $totalFailed));
-            $this->_getLogger()->addMajor(
-                Mage::helper('googleshoppingapi')->__('Errors happened during synchronization with Google Shopping'),
-                $errors
             );
         }
 
@@ -205,6 +180,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         $errors = array();
         
         $batchInsertProducts = array();
+        $batchDeleteProducts = array();
 
         $itemsCollection = $this->_getItemsCollection($items);
 
@@ -219,76 +195,95 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 $this->_getLogger()->setStoreId($item->getStoreId());
                 $removeInactive = $this->_getConfig()->getConfigData('autoremove_disabled',$item->getStoreId());
                 $renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
-                try {
-                    if($removeInactive && ($item->getProduct()->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED || !$item->getProduct()->getStockItem()->getIsInStock() )) {
-                        // TODO: batch delete
-                        $item->deleteItem();
-                        $item->delete();
-                        $totalDeleted++;
-                        Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
-                    } else {
-                        if(!isset($batchInsertProducts[$item->getStoreId()])) {
-                            $batchInsertProducts[$item->getStoreId()] = array();
-                        }
-                        $batchInsertProducts[$item->getStoreId()][$item->getId()] = $item->getType()->convertAttributes($item->getProduct());
+                if($removeInactive && ($item->getProduct()->getStatus() == Mage_Catalog_Model_Product_Status::STATUS_DISABLED || !$item->getProduct()->getStockItem()->getIsInStock() )) {
+                    if(!isset($batchDeleteProducts[$item->getStoreId()])) {
+                        $batchDeleteProducts[$item->getStoreId()] = array();
                     }
-                } catch (Mage_Core_Exception $e) {
-                    $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" cannot be updated at Google Content. %s', $item->getProduct()->getName(), $e->getMessage());
-                    $totalFailed++;
-                } catch (Exception $e) {
-                    // remove items which are not available on google content
-                    if($e->getCode() == "404") {
-                        $item->delete();
-                        $totalDeleted++;
-                        Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
-                    } else {                    
-                        Mage::logException($e);
-                        $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" hasn\'t been updated.', $item->getProduct()->getName());
-                        $errors[] = $e->getMessage();
-                        $totalFailed++;
+                    $batchDeleteProducts[$item->getStoreId()][$item->getId()] = $item->getGoogleShoppingItemId();
+                } else {
+                    if(!isset($batchInsertProducts[$item->getStoreId()])) {
+                        $batchInsertProducts[$item->getStoreId()] = array();
                     }
+                    $batchInsertProducts[$item->getStoreId()][$item->getId()] = $item->getType()->convertAttributes($item->getProduct());
                 }
             }
-            
+
             if(count($batchInsertProducts) > 0 ) {
                 foreach($batchInsertProducts as $storeId => $products) {
                     try {
-                        $result = Mage::getModel('googleshoppingapi/googleShopping')->productBatchInsert($products,$storeId);
+                        $insertResult = Mage::getModel('googleshoppingapi/googleShopping')->productBatchInsert($products,$storeId);
                     } catch(Exception $e) {
                         $errors[] = "Failed to batch update for store ".$storeId.":".$e->getMessage();
                         Mage::logException($e);
                         Mage::log($e->getMessage());
                     }
                     $resEntries = array();
-                    if($result) { // update expiration dates or collect errors
-                        foreach($result->getEntries() as $batchEntry) {
+                    if($insertResult) { // update expiration dates or collect errors
+                        foreach($insertResult->getEntries() as $batchEntry) {
                             $resEntries[$batchEntry->getBatchId()] = $batchEntry;
                         }
                         foreach($itemsCollection as $item) {
-                            
-                            if(!isset($resEntries[$item->getId()]) || !is_a($resEntries[$item->getId()],'Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry')) {
-                                $errors[] = $item->getId()." - missing response";
-                                continue;
-                            }
-                            
-                            if($resErrors = $resEntries[$item->getId()]->getErrors()) {
-                                foreach($resErrors->getErrors() as $resError) {
-                                    $totalFailed++;
-                                    $errors[] = $item->getId()." - ".$resError->getMessage();
+                            if(isset($products[$item->getId()])){
+                                if(!isset($resEntries[$item->getId()]) || !is_a($resEntries[$item->getId()],'Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry')) {
+                                    $errors[] = $item->getId()." - missing response";
+                                    continue;
                                 }
-                            } else {
                                 
-                                $expires = $this->convertContentDateToTimestamp(
-                                    $resEntries[$item->getId()]->getProduct()->getExpirationDate()
-                                );
-                                $item->setExpires($expires);
+                                if($resErrors = $resEntries[$item->getId()]->getErrors()) {
+                                    foreach($resErrors->getErrors() as $resError) {
+                                        $totalFailed++;
+                                        $errors[] = $item->getId()." - ".$resError->getMessage();
+                                    }
+                                } else {
+                                    
+                                    $expires = $this->convertContentDateToTimestamp(
+                                        $resEntries[$item->getId()]->getProduct()->getExpirationDate()
+                                    );
+                                    $item->setExpires($expires);
+                                    $totalUpdated++;
+                                }
                             }
                         }
                         $itemsCollection->save();
                     }
                 }
-                
-                
+            }
+
+            if(count($batchDeleteProducts) > 0 ) {
+                foreach($batchDeleteProducts as $storeId => $products) {
+                    try {
+                        $deleteResult = Mage::getModel('googleshoppingapi/googleShopping')->productBatchDelete($products,$storeId);
+                    } catch(Exception $e) {
+                        $errors[] = "Failed to batch delete for store ".$storeId.":".$e->getMessage();
+                        Mage::logException($e);
+                        Mage::log($e->getMessage());
+                    }
+                    $resEntries = array();
+                    if($deleteResult) { // update expiration dates or collect errors
+                        foreach($deleteResult->getEntries() as $batchEntry) {
+                            $resEntries[$batchEntry->getBatchId()] = $batchEntry;
+                        }
+                        foreach($itemsCollection as $item) {
+                            if(isset($products[$item->getId()])){
+                                if(!isset($resEntries[$item->getId()]) || !is_a($resEntries[$item->getId()],'Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry')) {
+                                    $errors[] = $item->getId()." - missing response";
+                                    continue;
+                                }
+                                
+                                if($resErrors = $resEntries[$item->getId()]->getErrors()) {
+                                    foreach($resErrors->getErrors() as $resError) {
+                                        $totalFailed++;
+                                        $errors[] = $item->getId()." - ".$resError->getMessage();
+                                    }
+                                } else {
+                                    $item->delete();
+                                    $totalDeleted++;
+                                }
+                            }
+                        }
+                        $itemsCollection->save();
+                    }
+                }
             }
             
         } else {
@@ -296,14 +291,14 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         }
         if($totalDeleted > 0 || $totalUpdated > 0) {
             $this->_getLogger()->addSuccess(
-                Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed') . "\n"
-                . Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
+                Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed.'),
+                Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
             );
         }
         if ($totalFailed > 0 || count($errors)) {
             array_unshift($errors, Mage::helper('googleshoppingapi')->__("Cannot update %s items.", $totalFailed));
             $this->_getLogger()->addMajor(
-                Mage::helper('googleshoppingapi')->__('Errors happened during synchronization with Google Shopping'),
+                Mage::helper('googleshoppingapi')->__('Errors happened during synchronization with Google Shopping.'),
                 $errors
             );
         }
@@ -312,16 +307,16 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     }
     
     /**
-     * Synchronize all items of a stroe
+     * Synchronize all items of a store
      *
      * @param int $storeId
      *
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
     public function synchronizeStoreItems($storeId) {
-    
+        
         $items = $this->_getItemsCollectionByStore($storeId);
-        $this->synchronizeItems($items);
+        $this->batchSynchronizeItems($items);
     
         return $this;
     }
@@ -347,11 +342,15 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      * @param array|BlueVisionTec_GoogleShoppingApi_Model_Resource_Item_Collection $items
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
-    public function deleteItems($items)
+    public function batchDeleteItems($items)
     {
         $totalDeleted = 0;
+        $totalFailed = 0;
         $itemsCollection = $this->_getItemsCollection($items);
         $errors = array();
+
+        $batchDeleteProducts = array();
+
         if ($itemsCollection) {
             if (count($itemsCollection) < 1) {
                 return $this;
@@ -362,23 +361,48 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 }
                 $this->_getLogger()->setStoreId($item->getStoreId());
                 try {
-                    $item->deleteItem()->delete();
-                    // The item was removed successfully
-                    $totalDeleted++;
+                    if(!isset($batchDeleteProducts[$item->getStoreId()])) {
+                        $batchDeleteProducts[$item->getStoreId()] = array();
+                    }
+                    $batchDeleteProducts[$item->getStoreId()][$item->getId()] = $item->getGoogleShoppingItemId();
                 } catch (Exception $e) {
-                    
-                    if($e->getCode() == 404){
-						$item->delete();
-						$this->_getLogger()->addNotice(
-							Mage::helper('googleshoppingapi')->__(
-								'The item "%s" was not found on GoogleContent',
-								$item->getProduct()->getName()
-							)
-						);
-						$totalDeleted++;
-                    } else {
-						Mage::logException($e);
-						$errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" hasn\'t been deleted.', $item->getProduct()->getName());
+                    Mage::logException($e);
+                    $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" hasn\'t been deleted.', $item->getProduct()->getName());
+                }
+            }
+
+            if(count($batchDeleteProducts) > 0 ) {
+                foreach($batchDeleteProducts as $storeId => $products) {
+                    try {
+                        $result = Mage::getModel('googleshoppingapi/googleShopping')->productBatchDelete($products,$storeId);
+                    } catch(Exception $e) {
+                        $errors[] = "Failed to batch delete for store ".$storeId.":".$e->getMessage();
+                        Mage::logException($e);
+                        Mage::log($e->getMessage());
+                    }
+                    $resEntries = array();
+                    if($result) { // update expiration dates or collect errors
+                        foreach($result->getEntries() as $batchEntry) {
+                            $resEntries[$batchEntry->getBatchId()] = $batchEntry;
+                        }
+                        foreach($itemsCollection as $item) {
+                            
+                            if(!isset($resEntries[$item->getId()]) || !is_a($resEntries[$item->getId()],'Google_Service_ShoppingContent_ProductsCustomBatchResponseEntry')) {
+                                $errors[] = $item->getId()." - missing response";
+                                continue;
+                            }
+                            
+                            if($resErrors = $resEntries[$item->getId()]->getErrors()) {
+                                foreach($resErrors->getErrors() as $resError) {
+                                    $totalFailed++;
+                                    $errors[] = $item->getId()." - ".$resError->getMessage();
+                                }
+                            } else {
+                                $item->delete();
+                                $totalDeleted++;
+                            }
+                        }
+                        $itemsCollection->save();
                     }
                 }
             }
@@ -388,13 +412,13 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
 
         if ($totalDeleted > 0) {
             $this->_getLogger()->addSuccess(
-                Mage::helper('googleshoppingapi')->__('Google Shopping item removal process succeded'),
+                Mage::helper('googleshoppingapi')->__('Google Shopping item removal process succeded.'),
                 Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been removed from Google Shopping.', $totalDeleted)
             );
         }
         if (count($errors)) {
             $this->_getLogger()->addMajor(
-                Mage::helper('googleshoppingapi')->__('Errors happened while deleting items from Google Shopping'),
+                Mage::helper('googleshoppingapi')->__('Errors happened while deleting items from Google Shopping.'),
                 $errors
             );
         }
