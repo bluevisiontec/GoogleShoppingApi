@@ -256,9 +256,9 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
             }
             try {
                 $flag->lock();
-                /** @var BlueVisionTec_GoogleShoppingApi_Model_MassOperations */
-                Mage::getModel('googleshoppingapi/massOperations')
-                    ->setFlag($flag)
+                /** @var BlueVisionTec_GoogleShoppingApi_Model_MassOperations $mo */
+                $mo = Mage::getModel('googleshoppingapi/massOperations');
+                $mo->setFlag($flag)
                     ->batchAddStoreItems($_storeId);
             } catch (Exception $e) {
                 $flag->unlock();

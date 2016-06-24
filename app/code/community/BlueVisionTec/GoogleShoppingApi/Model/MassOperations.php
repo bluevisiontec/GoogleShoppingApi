@@ -86,9 +86,9 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                         if ($product->getId()) {
                             /** @var BlueVisionTec_GoogleShoppingApi_Model_Item $item */
                             $item = Mage::getModel('googleshoppingapi/item');
-                            $item
-                                ->insertItem($product)
-                                ->save();
+                            $item->insertItem($product);
+                            $item->setData('store_id', $storeId);
+                            $item->save();
                             // The product was added successfully
                             $totalAdded++;
                         }

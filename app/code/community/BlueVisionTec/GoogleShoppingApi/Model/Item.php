@@ -81,7 +81,8 @@ class BlueVisionTec_GoogleShoppingApi_Model_Item extends Mage_Core_Model_Abstrac
      */
     public function insertItem(Mage_Catalog_Model_Product $product)
     {
-        $this->setProduct($product);
+        $storeId = $this->getStoreId();
+        $this->setProduct($product, $storeId);
         $this->getServiceItem()
             ->insert($this);
         $this->setTypeId($this->getType()->getTypeId());
@@ -180,14 +181,15 @@ class BlueVisionTec_GoogleShoppingApi_Model_Item extends Mage_Core_Model_Abstrac
     /**
      * Product Setter.
      *
-     * @param Mage_Catalog_Model_Product
+     * @param Mage_Catalog_Model_Product $product
+     * @param int $storeId
      * @return BlueVisionTec_GoogleShoppingApi_Model_Item
      */
-    public function setProduct(Mage_Catalog_Model_Product $product)
+    public function setProduct(Mage_Catalog_Model_Product $product, $storeId = NULL)
     {
         $this->setData('product', $product);
         $this->setProductId($product->getId());
-        $this->setStoreId($product->getStoreId());
+        $this->setStoreId(isset($storeId) ? $storeId : $product->getStoreId());
 
         return $this;
     }
