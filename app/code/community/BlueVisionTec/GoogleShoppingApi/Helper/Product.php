@@ -81,16 +81,20 @@ class BlueVisionTec_GoogleShoppingApi_Helper_Product extends Mage_Core_Helper_Ab
         }
     }
 
-    public function buildAvailableProductItems($store)
+    /**
+     * Builds the collection of products which are okay to insert/add to google
+     * (based on custom attribute 'google_shopping_auto_update')
+     *
+     * @param Mage_Core_Model_Store $store
+     *
+     * @return \Mage_Catalog_Model_Resource_Product_Collection
+     */
+    public function buildAvailableProductItems(Mage_Core_Model_Store $store)
     {
         /** @var Mage_Catalog_Model_Resource_Product_Collection $collection */
-        $collection = Mage::getModel('catalog/product')->getCollection()
-            ->setStore($store)
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('price')
-            ->addAttributeToSelect('status')
-            ->addAttributeToSelect('attribute_set_id')
+        $collection = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->addAttributeToSelect('*')
         ->addFieldtoFilter('google_shopping_auto_update', array('eq'=>'1'));
 
         if ($store->getId()) {

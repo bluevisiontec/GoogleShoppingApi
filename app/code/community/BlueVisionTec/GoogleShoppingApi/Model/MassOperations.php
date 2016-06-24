@@ -53,37 +53,46 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     /**
      * Add product to Google Content.
      *
-     * @param array $productIds
+     * @param Mage_Catalog_Model_Resource_Product_Collection $productCollection
      * @param int $storeId
      * 
      * @throws Mage_Core_Exception
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
-    public function addProducts($productIds, $storeId)
+    public function addProducts(Mage_Catalog_Model_Resource_Product_Collection $productCollection, $storeId)
     {
         $this->_getLogger()->setStoreId($storeId);
         
         $totalAdded = 0;
         $errors = array();
-        if (is_array($productIds)) {
-            foreach ($productIds as $productId) {
+        if ($productCollection->getSize() > 0) {
+            $productCollection->setPageSize(100);
+            $pages = $productCollection->getLastPageNumber();
+
+            $currentPage = 1;
+            $batchNumber = 0;
+
+            do {
+
+                $productCollection->setCurPage($currentPage);
+                $productCollection->load();
+
                 if ($this->_flag && $this->_flag->isExpired()) {
                     break;
                 }
                 try {
-                    $product = Mage::getModel('catalog/product')
-                        ->setStoreId($storeId)
-                        ->load($productId);
-
-                    if ($product->getId()) {
-                        /** @var BlueVisionTec_GoogleShoppingApi_Model_Item $item */
-                        $item = Mage::getModel('googleshoppingapi/item');
-                        $item
-                            ->insertItem($product)
-                            ->save();
-                        // The product was added successfully
-                        $totalAdded++;
-                    } 
+                    /** @var Mage_Catalog_Model_Product $product */
+                    foreach ($productCollection as $product) {
+                        if ($product->getId()) {
+                            /** @var BlueVisionTec_GoogleShoppingApi_Model_Item $item */
+                            $item = Mage::getModel('googleshoppingapi/item');
+                            $item
+                                ->insertItem($product)
+                                ->save();
+                            // The product was added successfully
+                            $totalAdded++;
+                        }
+                    }
                 } catch (Mage_Core_Exception $e) {
                     $errors[] = Mage::helper('googleshoppingapi')->__('The product "%s" cannot be added to Google Content. %s', $product->getName(), $e->getMessage());
                 } catch (Exception $e) {
@@ -91,10 +100,11 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                     $errors[] = Mage::helper('googleshoppingapi')->__('The product "%s" hasn\'t been added to Google Content.', $product->getName());
                     $errors[] = $e->getMessage();
                 }
-            }
-            if (empty($productIds)) {
-                return $this;
-            }
+
+                $productCollection->clear();
+                $currentPage++;
+
+            } while ($currentPage <= $pages);
         }
 
         if ($totalAdded > 0) {
@@ -349,11 +359,16 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      * @param int $storeId
      *
      * @return BlueVisionTec_GoogleShoppingApi_Model_MassOperations
+     * @throws \Exception
      */
     public function batchAddStoreItems($storeId) {
 
         $items = $this->_getUnsyncedItemsCollectionByStore($storeId);
-        $this->addProducts($items,$storeId);
+        if($items instanceof Mage_Catalog_Model_Resource_Product_Collection) {
+            $this->addProducts($items,$storeId);
+        } else {
+            throw new Exception("Could not generate product collection.");
+        }
 
         return $this;
     }
@@ -478,14 +493,13 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
      */
     protected function _getUnsyncedItemsCollectionByStore($storeId)
     {
-        $productIds = array();
+        $productCollection = NULL;
         if (is_numeric($storeId)) {
             /** @var BlueVisionTec_GoogleShoppingApi_Helper_Product $helperModel */
             $helperModel = Mage::helper('googleshoppingapi/product');
-            $collection = $helperModel->buildAvailableProductItems(Mage::app()->getStore($storeId));
-            $productIds = $collection->getAllIds();
+            $productCollection = $helperModel->buildAvailableProductItems(Mage::app()->getStore($storeId));
         }
-        return $productIds;
+        return $productCollection;
     }
 
     /**

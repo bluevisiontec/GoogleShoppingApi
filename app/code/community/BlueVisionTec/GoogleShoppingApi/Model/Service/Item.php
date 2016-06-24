@@ -26,7 +26,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Service_Item extends Varien_Object
      */
     public function insert($item)
     {
-
+        /** @var BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping $service */
         $service = Mage::getModel('googleshoppingapi/googleShopping');
         
         $product = $item->getType()->convertAttributes($item->getProduct());

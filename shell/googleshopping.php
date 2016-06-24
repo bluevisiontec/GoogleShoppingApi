@@ -57,7 +57,7 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
     {
 
 
-        switch ($this->_action) {
+        switch (strtolower($this->_action)) {
             case 'getcategory':
                 return $this->getCategory();
                 break;
@@ -224,6 +224,11 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
         }
     }
 
+    /**
+     * Adds/Insert products based on custom attribute 'google_shopping_auto_update' to google
+     *
+     * @return bool|void
+     */
     protected function additems()
     {
         $start = time();
