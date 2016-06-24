@@ -114,12 +114,18 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_ItemsControlle
 
         $productIds = $this->getRequest()->getParam('product', null);
 
+
         try {
             $flag->lock();
+            /** @var Mage_Catalog_Model_Resource_Product_Collection $productCollection */
+            $productCollection = Mage::getModel('catalog/product')->getCollection();
+            $productCollection->addAttributeToSelect('*');
+            $productCollection->addIdFilter($productIds);
             Mage::app()->setCurrentStore($storeId);
-            Mage::getModel('googleshoppingapi/massOperations')
-                ->setFlag($flag)
-                ->addProducts($productIds, $storeId);
+            /** @var BlueVisionTec_GoogleShoppingApi_Model_MassOperations $mo */
+            $mo = Mage::getModel('googleshoppingapi/massOperations');
+            $mo->setFlag($flag)
+                ->addProducts($productCollection, $storeId);
         } catch (Exception $e) {
             $flag->unlock();
             $this->_getLogger()->addMajor(
