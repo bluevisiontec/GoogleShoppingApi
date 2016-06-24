@@ -32,7 +32,6 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
             if (!Mage::getStoreConfigFlag('web/url/use_store') 
                 && $config->getAddStoreCodeToUrl()) {
                 
-                Mage::log($config->getAddStoreCodeToUrl() ? "true":"false");
                 $urlInfo = parse_url($url);
                 $store = $product->getStore()->getCode();
                 
@@ -52,7 +51,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
 				$url .= strpos($url,'?') === false ? '?' : '&';
 				$url .= $customUrlParameters;
 			}
-Mage::log($url);
+
             $shoppingProduct->setLink($url);
         }
 

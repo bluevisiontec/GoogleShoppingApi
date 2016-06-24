@@ -152,7 +152,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
 						$item->deleteItem();
 						$item->delete();
 						$totalDeleted++;
-						Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
+						//Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
 					} else {
 						$item->updateItem();
 						$item->save();
@@ -225,7 +225,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                         $item->deleteItem();
                         $item->delete();
                         $totalDeleted++;
-                        Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
+                        //Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
                     } else {
                         if(!isset($batchInsertProducts[$item->getStoreId()])) {
                             $batchInsertProducts[$item->getStoreId()] = array();
@@ -240,7 +240,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                     if($e->getCode() == "404") {
                         $item->delete();
                         $totalDeleted++;
-                        Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
+                        // Mage::log("remove inactive: ".$item->getProduct()->getSku()." - ".$item->getProduct()->getName());
                     } else {                    
                         Mage::logException($e);
                         $errors[] = Mage::helper('googleshoppingapi')->__('The item "%s" hasn\'t been updated.', $item->getProduct()->getName());
