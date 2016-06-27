@@ -98,6 +98,7 @@ class BlueVisionTec_GoogleShoppingApi_Helper_Product extends Mage_Core_Helper_Ab
         ->addFieldtoFilter('google_shopping_auto_update', array('eq'=>'1'));
 
         if ($store->getId()) {
+            $collection->setStore($store);
             $collection->addStoreFilter($store);
         }
 
@@ -107,6 +108,7 @@ class BlueVisionTec_GoogleShoppingApi_Helper_Product extends Mage_Core_Helper_Ab
         }
 
         Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);
+//        $sql = (string)$collection->getSelect();
         return $collection;
     }
 

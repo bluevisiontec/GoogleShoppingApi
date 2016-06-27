@@ -48,7 +48,10 @@ class BlueVisionTec_GoogleShoppingApi_Model_Type extends Mage_Core_Model_Abstrac
 		$map = $this->_getAttributesMapByProduct($product);
         $base = $this->_getBaseAttributes();
         $attributes = array_merge($base, $map);
-        
+        /**
+         * @var @string $name
+         * @var BlueVisionTec_GoogleShoppingApi_Model_Attribute $attribute
+         */
         foreach ($attributes as $name => $attribute) {
             $attribute->convertAttribute($product, $newShoppingProduct);
         }
