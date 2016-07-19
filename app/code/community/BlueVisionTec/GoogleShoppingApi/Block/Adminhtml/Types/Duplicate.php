@@ -16,29 +16,20 @@
  * @author      BlueVisionTec UG (haftungsbeschränkt) <magedev@bluevisiontec.eu>
  */
 
-class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Types_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
+class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Types_Duplicate extends Mage_Adminhtml_Block_Widget_Form_Container
 {
     public function __construct()
     {
         parent::__construct();
         $this->_blockGroup = 'googleshoppingapi';
         $this->_controller = 'adminhtml_types';
-        $this->_mode = 'edit';
+        $this->_mode = 'duplicate';
         $model = Mage::registry('current_item_type');
         $this->_removeButton('reset');
+        $this->_removeButton('delete');
         $this->_updateButton('save', 'label', $this->__('Save Mapping'));
         $this->_updateButton('save', 'id', 'save_button');
-        $this->_updateButton('delete', 'label', $this->__('Delete Mapping'));
-        
-        $typeId = $this->getRequest()->getParam('id');
-        $this->_addButton('duplicate',array(
-            'label' => 'Duplicate mapping',
-            'onclick' => "setLocation('". Mage::helper("adminhtml")->getUrl('adminhtml/googleShoppingApi_types/duplicate', array('id'=>$typeId)) . "')",
-        ));
-        if(!$model->getId()) {
-            $this->_removeButton('delete');
-            $this->_removeButton('duplicate');
-        }
+
     }
 
     /**
@@ -49,7 +40,7 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Types_Edit extends Mage_Ad
     public function getFormInitScripts()
     {
         return $this->getLayout()->createBlock('core/template')
-            ->setTemplate('googleshoppingapi/types/edit.phtml')
+            ->setTemplate('googleshoppingapi/types/duplicate.phtml')
             ->toHtml();
     }
 
@@ -60,11 +51,7 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Types_Edit extends Mage_Ad
      */
     public function getHeaderText()
     {
-        if(!is_null(Mage::registry('current_item_type')->getId())) {
-            return $this->__('Edit attribute set mapping');
-        } else {
-            return $this->__('New attribute set mapping');
-        }
+        return $this->__('Duplicate attribute set mapping');
     }
 
     /**

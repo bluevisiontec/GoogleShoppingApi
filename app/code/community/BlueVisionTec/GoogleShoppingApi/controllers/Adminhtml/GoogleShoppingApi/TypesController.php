@@ -92,8 +92,33 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_TypesControlle
      */
     public function newAction()
     {
+        $this->_initItemType();
+        
+        $typeId = $this->getRequest()->getParam('type_id');
+        
+    
         try {
-            $this->_initItemType();
+            
+            if($typeId) {
+                $type = Mage::registry('current_item_type')->getTypeId($typeId);
+                $result = array();
+                if ($typeId) {
+                    $collection = Mage::getResourceModel('googleshoppingapi/attribute_collection')
+                        ->addTypeFilter($typeId)
+                        ->load();
+                    foreach ($collection as $attribute) {
+                        $attributeData = $attribute->getData();
+                        $result[] = array(
+                            'attribute_id' => $attributeData['attribute_id'],
+                            'gcontent_attribute' => $attributeData['gcontent_attribute'],
+                            'attribute_set_id' => $attributeData['attribute_set_id'],
+                            'target_country' => $attributeData['target_country'],
+                        );
+                    }
+                }
+                
+                Mage::register('attributes', $result);
+            }
 
             $this->_title($this->__('New Attribute Mapping'));
 
@@ -108,6 +133,39 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_TypesControlle
         }
     }
 
+    /**
+     * Duplicate attribute set mapping
+     */
+    public function duplicateAction() {
+        $this->_initItemType();
+        $typeId = Mage::registry('current_item_type')->getTypeId();
+
+        try {
+            $result = array();
+            if ($typeId) {
+                $collection = Mage::getResourceModel('googleshoppingapi/attribute_collection')
+                    ->addTypeFilter($typeId)
+                    ->load();
+                foreach ($collection as $attribute) {
+                    $result[] = $attribute->getData();
+                }
+            }
+
+            $this->_title($this->__('Duplicate Attribute Mapping'));
+            Mage::register('attributes', $result);
+
+            $breadcrumbLabel = $typeId ? Mage::helper('googleshoppingapi')->__('Edit attribute set mapping') : Mage::helper('googleshoppingapi')->__('New attribute set mapping');
+            $this->_initAction()
+                ->_addBreadcrumb($breadcrumbLabel, $breadcrumbLabel)
+                ->_addContent($this->getLayout()->createBlock('googleshoppingapi/adminhtml_types_duplicate'))
+                ->renderLayout();
+        } catch (Exception $e) {
+            Mage::logException($e);
+            $this->_getSession()->addError(Mage::helper('googleshoppingapi')->__("Can't edit Attribute Set Mapping."));
+            $this->_redirect('*/*/index');
+        }
+    }
+    
     /**
      * Edit attribute set mapping
      */
@@ -183,6 +241,55 @@ class BlueVisionTec_GoogleShoppingApi_Adminhtml_GoogleShoppingApi_TypesControlle
                         ->setTypeId($typeId)
                         ->save();
                     unset($requiredAttributes[$attrInfo['gcontent_attribute']]);
+                }
+            }
+
+            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('googleshoppingapi')->__('The attribute mapping has been saved.'));
+            if (!empty($requiredAttributes)) {
+                Mage::getSingleton('adminhtml/session')
+                    ->addSuccess(Mage::helper('googleshoppingapi/category')->getMessage());
+            }
+        } catch (Exception $e) {
+            Mage::logException($e);
+            Mage::getSingleton('adminhtml/session')->addError(Mage::helper('googleshoppingapi')->__("Can't save Attribute Set Mapping."));
+        }
+        $this->_redirect('*/*/index', array('store' => $this->_getStore()->getId()));
+    }
+    
+    /**
+     * Save attribute set mapping
+     */
+    public function duplicateSaveAction()
+    {
+        /** @var $typeModel BlueVisionTec_GoogleShoppingApi_Model_Type */
+        $typeModel = Mage::getModel('googleshoppingapi/type');
+        $sourceId = $this->getRequest()->getParam('type_id');
+        
+        if (is_null($sourceId)) {
+            Mage::getSingleton('adminhtml/session')->addError(Mage::helper('googleshoppingapi')->__("Missing source id for duplicate."));
+            $this->_redirect('*/*/index', array('store' => $this->_getStore()->getId()));
+        }
+
+        try {
+            $sourceAttributeCollection = Mage::getResourceModel('googleshoppingapi/attribute_collection')
+                ->addTypeFilter($sourceId)
+                ->load();
+            
+
+            $typeModel->setAttributeSetId($this->getRequest()->getParam('attribute_set_id'))
+                ->setTargetCountry($this->getRequest()->getParam('target_country'));
+            $typeModel->save();
+
+            $requiredAttributes = Mage::getSingleton('googleshoppingapi/config')->getRequiredAttributes();
+            if ($sourceAttributeCollection->count()) {
+                $typeId = $typeModel->getId();
+                foreach ($sourceAttributeCollection as $attrInfo) {
+                    Mage::getModel('googleshoppingapi/attribute')
+                        ->setAttributeId($attrInfo->getAttributeId())
+                        ->setGcontentAttribute($attrInfo->getGcontentAttribute())
+                        ->setTypeId($typeId)
+                        ->save();
+                    unset($requiredAttributes[$attrInfo->getGcontentAttribute()]);
                 }
             }
 
