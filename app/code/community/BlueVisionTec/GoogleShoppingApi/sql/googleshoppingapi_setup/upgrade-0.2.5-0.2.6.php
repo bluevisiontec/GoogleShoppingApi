@@ -34,8 +34,8 @@ try {
         'user_defined' => true,
         'required' => false,
         'group' => 'Google Shopping',
-        'default' => 1,
-        'default_value' => 1,
+        'default' => 0,
+        'default_value' => 0,
     ));
 
     $setup->endSetup();
