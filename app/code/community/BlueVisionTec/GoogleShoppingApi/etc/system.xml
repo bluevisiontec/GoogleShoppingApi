@@ -1,15 +1,9 @@
 <?xml version="1.0"?>
     <config>
-    <tabs>
-    <bvt_modules translate="label">
-        <label>BlueVisionTec Modules</label>
-        <sort_order>1000</sort_order>
-    </bvt_modules>
-    </tabs>
     <sections>
     <bvt_googleshoppingapi_config translate="label">
         <label>GoogleShoppingAPI</label>
-        <tab>bvt_modules</tab>
+        <tab>catalog</tab>
         <frontend_type>text</frontend_type>
         <sort_order>200</sort_order>
         <show_in_default>1</show_in_default>
