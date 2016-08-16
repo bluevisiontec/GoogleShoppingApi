@@ -47,26 +47,8 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Product
 	 */
 	protected function _prepareCollection()
 	{
-		$collection = Mage::getModel('catalog/product')->getCollection()
-			->setStore($this->_getStore())
-			->addAttributeToSelect('name')
-			->addAttributeToSelect('sku')
-			->addAttributeToSelect('price')
-			->addAttributeToSelect('status')
-			->addAttributeToSelect('attribute_set_id');
-
-		$store = $this->_getStore();
-		if ($store->getId()) {
-			$collection->addStoreFilter($store);
-		}
-
-		$excludeIds = $this->_getGoogleShoppingProductIds();
-		if ($excludeIds) {
-			$collection->addIdFilter($excludeIds, true);
-		}
-
-		Mage::getSingleton('catalog/product_status')->addSaleableFilterToCollection($collection);
-		$this->setCollection($collection);
+		$collection = Mage::helper('googleshoppingapi/product')->buildAvailableProductItems($this->_getStore());
+        $this->setCollection($collection);
 		return parent::_prepareCollection();
 	}
 
@@ -164,23 +146,6 @@ class BlueVisionTec_GoogleShoppingApi_Block_Adminhtml_Items_Product
 	public function getGridUrl()
 	{
 		return $this->getUrl('*/googleShoppingApi_selection/grid', array('index' => $this->getIndex(),'_current'=>true));
-	}
-
-	/**
-	 * Get array with product ids, which was exported to Google Content
-	 *
-	 * @return array
-	 */
-	protected function _getGoogleShoppingProductIds()
-	{
-		$collection = Mage::getResourceModel('googleshoppingapi/item_collection')
-			->addStoreFilter($this->_getStore()->getId())
-			->load();
-		$productIds = array();
-		foreach ($collection as $item) {
-			$productIds[] = $item->getProductId();
-		}
-		return $productIds;
 	}
 
 	/**
