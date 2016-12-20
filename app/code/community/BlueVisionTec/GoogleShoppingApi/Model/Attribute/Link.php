@@ -26,7 +26,27 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
      */
     public function convertAttribute($product, $shoppingProduct)
     {
-        $url = $product->getProductUrl(false);
+        $parentId = Mage::getModel('catalog/product_type_configurable')
+                             ->getParentIdsByChild($product->getId());
+        $parentItem = Mage::getModel('catalog/product')->load($parentId);
+	$cCatId = array_reverse( $childItem->getCategoryIds() );
+	$pCatId = array_reverse( $parentItem->getCategoryIds() );	
+        $cCat = Mage::getModel('catalog/category')->load($cCatId[0]);
+	$pCat = Mage::getModel('catalog/category')->load($pCatId[0]);
+	$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+        if (!Mage::getStoreConfig('web/seo/use_rewrites')) {
+            if($product->getTypeId() == 'simple' && $parentItem->getTypeId() == 'configurable' || 'bundle'  || 'grouped') {
+                $url = $parentItem->getProductUrl(false);
+            } else {
+                $url = $childItem->getProductUrl(false);
+            }
+        } else {
+            if($product->getTypeId() == 'simple' && $parentItem->getTypeId() == 'configurable' || 'bundle'  || 'grouped') {
+                $url = "{$baseUrl}{$parentItem->getUrlPath($pCat)}";
+            } else {
+                $url = "{$baseUrl}{$product->getUrlPath($cCat)}";
+            }
+        }
         if ($url) {
             $config = Mage::getSingleton('googleshoppingapi/config');
             if (!Mage::getStoreConfigFlag('web/url/use_store') 
