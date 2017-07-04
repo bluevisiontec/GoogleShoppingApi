@@ -65,11 +65,68 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
             case 'syncitems':
                 return $this->syncItems();
                 break;
+            case 'additems':
+                return $this->addItems();
+                break;
+            case 'unlock':
+                return $this->_getFlag()->unlock();
+                break;
             default:
                 print $this->usageHelp();
                 return false;
         }
         
+    }
+    /**
+     * sync items
+     */
+    protected function addItems() {
+    
+        $start = time();
+    
+        $flag = $this->_getFlag();
+
+        if ($flag->isLocked()) {
+            echo "flag locked - synchronization process running\n";
+            return false;
+        }
+        
+        if($this->_storeId) {
+            $stores = array(
+                $this->_storeId => Mage::getModel('core/store')->load($this->_storeId)
+            );
+        } else {
+            echo "please specify store id\n";
+            return false;
+        }
+        if(!is_array($this->_productIds) && count($this->_productIds)) {
+            echo "please specify product ids\n";
+            return false;
+        }
+    
+        foreach($stores as $_storeId => $_store) {
+            try {
+                $flag->lock();
+                Mage::getModel('googleshoppingapi/massOperations')
+                    ->setFlag($flag)
+                    ->addProducts($this->_productIds, $_storeId);
+            } catch (Exception $e) {
+                $flag->unlock();
+                $this->_getLogger()->addMajor(
+                    Mage::helper('googleshoppingapi')->__('An error has occured while adding products to google shopping account.'),
+                    Mage::helper('googleshoppingapi')->__('One or more products were not added to google shopping account. Refer to the log file for details.')
+                );
+                Mage::logException($e);
+                Mage::log($e->getMessage());
+                return;
+            }
+            $flag->unlock();
+            
+        }
+        
+        $duration = time() - $start;
+        
+        echo "Adding products took $duration seconds\n";
     }
     
     /**

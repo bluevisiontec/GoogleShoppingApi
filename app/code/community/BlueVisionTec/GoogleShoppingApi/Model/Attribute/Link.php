@@ -42,15 +42,15 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_Link extends BlueVisionTec
                 }
             }
             
-			if( $config->getAddUtmSrcGshopping($product->getStoreId()) ) {
-				$url .= strpos($url,'?') === false ? '?' : '&';
-				$url .= 'utm_source=GoogleShopping';
-			}
-			if( $customUrlParameters = 
-					$config->getCustomUrlParameters($product->getStoreId()) ) {
-				$url .= strpos($url,'?') === false ? '?' : '&';
-				$url .= $customUrlParameters;
-			}
+            if( $config->getAddUtmSrcGshopping($product->getStoreId()) ) {
+                    $url .= strpos($url,'?') === false ? '?' : '&';
+                    $url .= 'utm_source=GoogleShopping';
+            }
+            if( $customUrlParameters = 
+                            $config->getCustomUrlParameters($product->getStoreId()) ) {
+                    $url .= strpos($url,'?') === false ? '?' : '&';
+                    $url .= $customUrlParameters;
+            }
 
             $shoppingProduct->setLink($url);
         }

@@ -217,7 +217,15 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
 		$product->setChannel("online");
 		$expDate = date("Y-m-d",(time()+30*24*60*60));//product expires in 30 days
 		$product->setExpirationDate($expDate);
+		try {
 		$result = $this->getShoppingService($storeId)->products->insert($merchantId, $product);
+		} catch(Exception $e) {
+		    $this->_getLogger()->addMajor(
+                        Mage::helper('googleshoppingapi')->__('Errors happened while adding products to Google Shopping.'),
+                        $e->getMessage()
+                    );
+		}
+		
 		return $result;
 		
     }
@@ -269,5 +277,13 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
 		return $this->insertProduct($product, $storeId);
     }
     
-    
+    /**
+     * Retrieve logger
+     *
+     * @return BlueVisionTec_GoogleShoppingApi_Model_Log
+     */
+    protected function _getLogger()
+    {
+        return Mage::getSingleton('googleshoppingapi/log');
+    }
 }
