@@ -175,7 +175,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         if($totalDeleted > 0 || $totalUpdated > 0) {
             $this->_getLogger()->addSuccess(
                 Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed') . "\n"
-                . Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
+                , Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
             );
         }
         if ($totalFailed > 0 || count($errors)) {
@@ -297,7 +297,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         if($totalDeleted > 0 || $totalUpdated > 0) {
             $this->_getLogger()->addSuccess(
                 Mage::helper('googleshoppingapi')->__('Product synchronization with Google Shopping completed') . "\n"
-                . Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
+                , Mage::helper('googleshoppingapi')->__('Total of %d items(s) have been deleted; total of %d items(s) have been updated.', $totalDeleted, $totalUpdated)
             );
         }
         if ($totalFailed > 0 || count($errors)) {
