@@ -25,12 +25,12 @@ class BlueVisionTec_GoogleShoppingApi_Model_Attribute_ContentLanguage extends Bl
      * @return Google_Service_ShoppingContent_Product
      */
     public function convertAttribute($product, $shoppingProduct)
-    {
-        $config = Mage::getSingleton('googleshoppingapi/config');
-        $targetCountry = $config->getTargetCountry($product->getStoreId());
-        $value = $config->getCountryInfo($targetCountry, 'language', $product->getStoreId());
+    {        
+        $value = Mage::getSingleton('googleshoppingapi/config')
+            ->getContentLanguage($product->getStoreId());
 
-        $shoppingProduct->setContentLanguage($value);
+        $contentLanguage = substr($value,0,2);
+        $shoppingProduct->setContentLanguage($contentLanguage);
 
     }
 }

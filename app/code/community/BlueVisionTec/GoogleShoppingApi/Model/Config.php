@@ -128,6 +128,17 @@ class BlueVisionTec_GoogleShoppingApi_Model_Config extends Varien_Object
     }
     
     /**
+     * Google Account target language
+     *
+     * @param int $storeId
+     * @return string Two-letters country ISO code
+     */
+    public function getContentLanguage($storeId = null)
+    {
+        return $this->getConfigData('content_language', $storeId);
+    }
+    
+    /**
      * Add utm_source=GoogleShopping as url parameter
      *
      * @param int $storeId

@@ -204,6 +204,8 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
         $totalFailed = 0;
         $errors = array();
         
+        $service = Mage::getModel('googleshoppingapi/googleShopping');
+        
         $batchInsertProducts = array();
 
         $itemsCollection = $this->_getItemsCollection($items);
@@ -216,6 +218,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
                 if ($this->_flag && $this->_flag->isExpired()) {
                     break;
                 }
+                
                 $this->_getLogger()->setStoreId($item->getStoreId());
                 $removeInactive = $this->_getConfig()->getConfigData('autoremove_disabled',$item->getStoreId());
                 $renewNotListed = $this->_getConfig()->getConfigData('autorenew_notlisted',$item->getStoreId());
@@ -336,7 +339,7 @@ class BlueVisionTec_GoogleShoppingApi_Model_MassOperations
     public function batchSynchronizeStoreItems($storeId) {
     
         $items = $this->_getItemsCollectionByStore($storeId);
-        $this->synchronizeItems($items);
+        $this->batchSynchronizeItems($items);
     
         return $this;
     }

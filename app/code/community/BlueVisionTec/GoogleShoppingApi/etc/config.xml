@@ -157,6 +157,8 @@
         <autorenew_notlisted>1</autorenew_notlisted>
         <autoremove_disabled>1</autoremove_disabled>
         <target_country>DE</target_country>
+        <content_language>de_DE</content_language>
+        
         <account_type>HOSTED_OR_GOOGLE</account_type>
         <use_service_account>0</use_service_account>
         <private_key_password>notasecret</private_key_password>

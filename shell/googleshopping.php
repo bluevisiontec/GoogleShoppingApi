@@ -153,7 +153,7 @@ class BlueVisionTec_Shell_GoogleShopping extends Mage_Shell_Abstract
     
         
         foreach($stores as $_storeId => $_store) {
-            if(!$this->getConfig()->getConfigData('enable_autosync',$_storeId)) {
+            if(!$this->_storeId && !$this->getConfig()->getConfigData('enable_autosync',$_storeId)) {
                 continue;
             }
             try {
