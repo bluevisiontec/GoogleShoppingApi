@@ -493,6 +493,12 @@
                     <required>0</required>
                 </adwords_queryparam>
             </ProductAds>
+            <Shipping>
+                <shipping_label translate="name">
+                    <name>Shipping Label</name>
+                    <required>0</required>
+                </shipping_label>
+            </Shipping>
             <CustomLabels>
                 <custom_label0 translate="name">
                     <name>Custom label 0</name>
