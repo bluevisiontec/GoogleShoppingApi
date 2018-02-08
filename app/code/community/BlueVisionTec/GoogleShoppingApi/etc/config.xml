@@ -168,6 +168,19 @@
         language code (ISO 639-1) and currency code (ISO 3166)
         according to Google Content documentation. -->
         <allowed_countries>
+            <AR translate="name currency_name">
+                <name>Argentina</name>
+                <language>es</language>
+                <locale>es_AR</locale>
+                <currency>ARS</currency>
+                <currency_name>Argentinian Peso</currency_name>
+            </AR>
+            <AU translate="name currency_name">
+                <name>Australia</name>
+                <language>en</language>
+                <currency>AUD</currency>
+                <currency_name>Australian Dollar</currency_name>
+            </AU>
             <AT translate="name currency_name">
                 <name>Austria</name>
                 <language>de</language>
@@ -175,12 +188,13 @@
                 <currency>EUR</currency>
                 <currency_name>Euro</currency_name>
             </AT>
-            <AU translate="name currency_name">
-                <name>Australia</name>
-                <language>en</language>
-                <currency>AUD</currency>
-                <currency_name>Australian Dollar</currency_name>
-            </AU>
+            <BE translate="name currency_name">
+                <name>Belgium</name>
+                <language>nl</language>
+                <locale>nl_BE</locale>
+                <currency>EUR</currency>
+                <currency_name>Euro</currency_name>
+            </BE>
             <BR translate="name currency_name">
                 <name>Brazil</name>
                 <language>pt</language>
@@ -188,15 +202,51 @@
                 <currency>BRL</currency>
                 <currency_name>Brazilian Real</currency_name>
             </BR>
+            <CA translate="name currency_name">
+                <name>Canada</name>
+                <language>en</language>
+                <locale>en_CA</locale>
+                <currency>CAD</currency>
+                <currency_name>Canadian Dollar</currency_name>
+            </CA>
+            <CL translate="name currency_name">
+                <name>Chile</name>
+                <language>es</language>
+                <locale>es_CL</locale>
+                <currency>CLP</currency>
+                <currency_name>Chilean Peso</currency_name>
+            </CL>
             <CN translate="name currency_name">
                 <name>China</name>
                 <language>zh_CN</language>
                 <currency>CNY</currency>
                 <currency_name>Chinese Yuan Renminbi</currency_name>
             </CN>
+            <CO translate="name currency_name">
+                <name>Colombia</name>
+                <language>es</language>
+                <locale>es_CO</locale>
+                <currency>COP</currency>
+                <currency_name>Colombian Peso</currency_name>
+            </CO>
+            <CZ translate="name currency_name">
+                <name>Czechia</name>
+                <language>cs</language>
+                <locale>cs_CZ</locale>
+                <currency>CZK</currency>
+                <currency_name>Czechian Koruna</currency_name>
+            </CZ>
+            <DK translate="name currency_name">
+                <name>Denmark</name>
+                <language>da</language>
+                <locale>da_DK</locale>
+                <currency>DKK</currency>
+                <currency_name>Danish Krone</currency_name>
+            </DK>
             <FR translate="name currency_name">
                 <name>France</name>
                 <language>fr</language>
+                <locale>fr_FR</locale>
                 <currency>EUR</currency>
                 <currency_name>Euro</currency_name>
             </FR>
@@ -207,44 +257,96 @@
                 <currency>EUR</currency>
                 <currency_name>Euro</currency_name>
             </DE>
+            <HK translate="name currency_name">
+                <name>Hong Kong</name>
+                <language>en</language>
+                <locale>en_HK</locale>
+                <currency>HKD</currency>
+                <currency_name>Hong Kong Dollar</currency_name>
+            </HK>
+            <IN translate="name currency_name">
+                <name>India</name>
+                <language>en</language>
+                <locale>en_IN</locale>
+                <currency>INR</currency>
+                <currency_name>Indian rupee</currency_name>
+            </IN>
+            <ID translate="name currency_name">
+                <name>Indonesia</name>
+                <language>in</language>
+                <locale>in_ID</locale>
+                <currency>IDR</currency>
+                <currency_name>Indonesian Rupiah</currency_name>
+            </ID>
+            <IE translate="name currency_name">
+                <name>Ireland</name>
+                <language>en</language>
+                <locale>en_IE</locale>
+                <currency>EUR</currency>
+                <currency_name>Euro</currency_name>
+            </IE>
+            <IL translate="name currency_name">
+                <name>Israel</name>
+                <language>iw</language>
+                <locale>iw_IL</locale>
+                <currency>ILS</currency>
+                <currency_name>Israeli new shekel</currency_name>
+            </IL>
             <IT translate="name currency_name">
                 <name>Italy</name>
                 <language>it</language>
+                <locale>it_IT</locale>
                 <currency>EUR</currency>
                 <currency_name>Euro</currency_name>
             </IT>
             <JP translate="name currency_name">
                 <name>Japan</name>
                 <language>ja</language>
+                <locale>ja_JP</locale>
                 <currency>JPY</currency>
                 <currency_name>Japanese Yen</currency_name>
             </JP>
+            <MY translate="name currency_name">
+                <name>Malaysia</name>
+                <language>ms</language>
+                <locale>ms_MY</locale>
+                <currency>MYR</currency>
+                <currency_name>Malaysia Ringgit</currency_name>
+            </MY>
+            <MX translate="name currency_name">
+                <name>Mexico</name>
+                <language>es</language>
+                <locale>es_MX</locale>
+                <currency>MXN</currency>
+                <currency_name>Mexican peso</currency_name>
+            </MX>
             <NL translate="name currency_name">
                 <name>Netherlands</name>
                 <language>nl</language>
                 <currency>EUR</currency>
                 <currency_name>Euro</currency_name>
             </NL>
-            <ES translate="name currency_name">
-                <name>Spain</name>
-                <language>es</language>
-                <currency>EUR</currency>
-                <currency_name>Euro</currency_name>
-            </ES>
-            <CH translate="name currency_name">
-                <name>Switzerland</name>
-                <language>de</language>
-                <locale>de_CH</locale>
-                <currency>CHF</currency>
-                <currency_name>Swiss Franc</currency_name>
-            </CH>
-            <GB translate="name currency_name">
-                <name>United Kingdom</name>
+            <NZ translate="name currency_name">
+                <name>New Zealand</name>
                 <language>en</language>
-                <locale>en_GB</locale>
-                <currency>GBP</currency>
-                <currency_name>British Pound Sterling</currency_name>
-            </GB>
+                <locale>en_NZ</locale>
+                <currency>NZD</currency>
+                <currency_name>New Zealand Dollar</currency_name>
+            </NZ>
+            <NO translate="name currency_name">
+                <name>Norway</name>
+                <language>nb</language>
+                <locale>nb_NO</locale>
+                <currency>NOK</currency>
+                <currency_name>Norwegian krone</currency_name>
+            </NO>
+            <PH translate="name currency_name">
+                <name>Philippines</name>
+                <language>en</language>
+                <locale>en_PH</locale>
+                <currency>PHP</currency>
+                <currency_name>Philippine Peso</currency_name>
+            </PH>
 			<PL translate="name currency_name">
                 <name>Poland</name>
                 <language>pl</language>
@@ -252,34 +354,48 @@
                 <currency>PLN</currency>
                 <currency_name>Polish złoty</currency_name>
             </PL>
-			<BE translate="name currency_name">
-                <name>Belgium</name>
-                <language>nl</language>
-                <locale>nl_BE</locale>
+            <PT translate="name currency_name">
+                <name>Portugal</name>
+                <language>pt</language>
+                <locale>pt_PT</locale>
+                <currency>EUR</currency>
+                <currency_name>EURO</currency_name>
+            </PT>
+            <RU translate="name currency_name">
+                <name>Russia</name>
+                <language>ru</language>
+                <locale>ru_RU</locale>
+                <currency>RUB</currency>
+                <currency_name>Russian ruble</currency_name>
+            </RU>
+            <SA translate="name currency_name">
+                <name>Saudi Arabia</name>
+                <language>ar</language>
+                <locale>ar_SA</locale>
+                <currency>SAR</currency>
+                <currency_name>Saudi Riyal</currency_name>
+            </SA>
+            <SG translate="name currency_name">
+                <name>South Africa</name>
+                <language>en</language>
+                <locale>en_SG</locale>
+                <currency>SGD</currency>
+                <currency_name>Singapore Dollar</currency_name>
+            </SG>
+            <ZA translate="name currency_name">
+                <name>South Africa</name>
+                <language>en</language>
+                <locale>en_ZA</locale>
+                <currency>ZAR</currency>
+                <currency_name>South African Rand</currency_name>
+            </ZA>
+            <ES translate="name currency_name">
+                <name>Spain</name>
+                <language>es</language>
+                <locale>es_ES</locale>
                 <currency>EUR</currency>
                 <currency_name>Euro</currency_name>
-            </BE>
-			<DK translate="name currency_name">
-                <name>Denmark</name>
-                <language>da</language>
-                <locale>da_DK</locale>
-                <currency>DKK</currency>
-                <currency_name>Danish krone</currency_name>
-            </DK>
-			<MX translate="name currency_name">
-                <name>Mexico</name>
-                <language>es</language>
-                <locale>es_MX</locale>
-                <currency>MXN</currency>
-                <currency_name>Mexican peso</currency_name>
-            </MX>
-			<NO translate="name currency_name">
-                <name>Norway</name>
-                <language>nb</language>
-                <locale>nb_NO</locale>
-                <currency>NOK</currency>
-                <currency_name>Norwegian krone</currency_name>
-            </NO>
+            </ES>
 			<SE translate="name currency_name">
                 <name>Sweden</name>
                 <language>sv</language>
@@ -287,6 +403,27 @@
                 <currency>SEK</currency>
                 <currency_name>Swedish krona</currency_name>
             </SE>
+            <CH translate="name currency_name">
+                <name>Switzerland</name>
+                <language>de</language>
+                <locale>de_CH</locale>
+                <currency>CHF</currency>
+                <currency_name>Swiss Franc</currency_name>
+            </CH>
+            <TH translate="name currency_name">
+                <name>Taiwan</name>
+                <language>tw</language>
+                <locale>zh_TW</locale>
+                <currency>TWD</currency>
+                <currency_name>New Taiwan Dollar</currency_name>
+            </TH>
+            <TH translate="name currency_name">
+                <name>Thailand</name>
+                <language>th</language>
+                <locale>th_TH</locale>
+                <currency>THB</currency>
+                <currency_name>Thai Baht</currency_name>
+            </TH>
 			<TR translate="name currency_name">
                 <name>Turkey</name>
                 <language>tr</language>
@@ -294,34 +431,27 @@
                 <currency>TRY</currency>
                 <currency_name>Turkish lira</currency_name>
             </TR>
-			<CZ translate="name currency_name">
-                <name>Czech Republic</name>
-                <language>cs</language>
-                <locale>cs_CZ</locale>
-                <currency>CZK</currency>
-                <currency_name>Czech koruna</currency_name>
-            </CZ>
-			<CA translate="name currency_name">
-                <name>Canada</name>
+            <UA translate="name currency_name">
+                <name>Ukraine</name>
+                <language>uk</language>
+                <locale>uk_UA</locale>
+                <currency>UAH</currency>
+                <currency_name>Ukrainian Hryvnia</currency_name>
+            </UA>
+            <AE translate="name currency_name">
+                <name>United Arab Emirates</name>
+                <language>ar</language>
+                <locale>ar_AE</locale>
+                <currency>AED</currency>
+                <currency_name>United Arab Emirates Dirham</currency_name>
+            </AE>
+            <GB translate="name currency_name">
+                <name>United Kingdom</name>
                 <language>en</language>
-                <locale>en_CA</locale>
-                <currency>CAD</currency>
-                <currency_name>Canadian Dollar</currency_name>
-            </CA>
-			<IN translate="name currency_name">
-                <name>India</name>
-                <language>en</language>
-                <locale>en_IN</locale>
-                <currency>INR</currency>
-                <currency_name>Indian rupee</currency_name>
-            </IN>
-			<RU translate="name currency_name">
-                <name>Russia</name>
-                <language>ru</language>
-                <locale>ru_RU</locale>
-                <currency>RUB</currency>
-                <currency_name>Russian ruble</currency_name>
-            </RU>
+                <locale>en_GB</locale>
+                <currency>GBP</currency>
+                <currency_name>British Pound Sterling</currency_name>
+            </GB>
             <US translate="name currency_name">
                 <name>United States</name>
                 <language>en</language>
@@ -329,6 +459,13 @@
                 <currency>USD</currency>
                 <currency_name>US Dollar</currency_name>
             </US>
+            <VN translate="name currency_name">
+                <name>Vietnam</name>
+                <language>vi</language>
+                <locale>vi_VN</locale>
+                <currency>VND</currency>
+                <currency_name>Vietnamese Dong</currency_name>
+            </VN>
         </allowed_countries>
         
         <!-- Available destinations for products. -->
