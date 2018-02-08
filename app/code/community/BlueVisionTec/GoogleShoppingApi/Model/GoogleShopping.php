@@ -1,14 +1,19 @@
 <?php
-if(file_exists(Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php')) { //vendor path within magento installation dir
 
-    require_once Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php';
-} elseif(file_exists(Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/autoload.php')) { //vendor path outside magento installation dir
-
-    set_include_path(get_include_path() . PATH_SEPARATOR . Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/');
-    require_once Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/autoload.php';
-} else {
-    Mage::throwException('Cannot find Google Content API autoload file');
+// If the class exists when we get here it means it was already autoloaded by Composer so there
+// is no need to include any files.
+if(!class_exists('Google_Client')) {
+    if(file_exists(Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php')) {
+        require_once Mage::getBaseDir().'/vendor/google/apiclient/src/Google/autoload.php';
+    } elseif(file_exists(Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/autoload.php')) {
+        $path = get_include_path() . PATH_SEPARATOR . Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/';
+        set_include_path($path);
+        require_once Mage::getBaseDir().'/../vendor/google/apiclient/src/Google/autoload.php';
+    } else {
+        Mage::throwException('Cannot find Google Content API autoload file');
+    }
 }
+
 /**
  * @category	BlueVisionTec
  * @package     BlueVisionTec_GoogleShoppingApi
@@ -76,6 +81,43 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
 			return true;
 		}
     }
+
+    /**
+     * Return Google Content Client Instance using the API Client V2.
+     * @param int $storeId
+     * @return bool|Google_Client
+     */
+    private function getClientV2($storeId) {
+        $privateKeyFile = Mage::getBaseDir().self::PRIVATE_KEY_UPLOAD_DIR.$this->getConfig()->getConfigData('private_key_file',$storeId);
+
+        if(!file_exists($privateKeyFile)) {
+            Mage::getSingleton('adminhtml/session')->addError("Please specify Google Content API access data for this store!");
+            return false;
+        }
+
+        // TODO Turn this into an object?
+        $privateKeyJson = json_decode(file_get_contents($privateKeyFile));
+        if(!$privateKeyJson->client_id) {
+            Mage::getSingleton('adminhtml/session')->addError("The private key that you specified does not contain a client_id. Please make sure that you are uploading a valid private key.");
+            return false;
+        }
+
+        $client = new Google_Client();
+        $client->setApplicationName(self::APPNAME);
+        $client->setClientId($privateKeyJson->client_id);
+        $client->setSubject($privateKeyJson->client_email);
+        $client->setScopes([Google_Service_ShoppingContent::CONTENT]);
+
+        putenv('GOOGLE_APPLICATION_CREDENTIALS='.$privateKeyFile);
+        $client->useApplicationDefaultCredentials();
+
+        if ($client->isAccessTokenExpired()) {
+            $client->fetchAccessTokenWithAssertion();
+        }
+
+        $this->_client = $client;
+        return $this->_client;
+    }
     
     /**
      * Return Google Content Client Instance
@@ -88,6 +130,11 @@ class BlueVisionTec_GoogleShoppingApi_Model_GoogleShopping extends Varien_Object
      */
     public function getClient($storeId, $noAuthRedirect = false)
     {
+        // FIXME Perhaps there is a more robust way of checking for library versions. Probably yes!
+        if(floatval(Google_Client::LIBVER) >= 2) {
+            return $this->getClientV2($storeId);
+        }
+
         $useServiceAccount = $this->getConfig()->getUseServiceAccount($storeId);
         
 		if(isset($this->_client)) {

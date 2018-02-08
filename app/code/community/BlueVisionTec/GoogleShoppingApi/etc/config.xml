@@ -161,6 +161,7 @@
         
         <account_type>HOSTED_OR_GOOGLE</account_type>
         <use_service_account>0</use_service_account>
+        <using_v2>0</using_v2>
         <private_key_password>notasecret</private_key_password>
         <add_store_code_to_url>1</add_store_code_to_url>
         
